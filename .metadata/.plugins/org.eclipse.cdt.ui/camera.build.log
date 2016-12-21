@@ -1,0 +1,27 @@
+02:22:44 **** Build of configuration Debug for project camera ****
+make all 
+Building file: ../src/camera.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/camera.d" -MT"src/camera.d" -o "src/camera.o" "../src/camera.cpp"
+Finished building: ../src/camera.cpp
+ 
+Building file: ../camera_test.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"camera_test.d" -MT"camera_test.d" -o "camera_test.o" "../camera_test.cpp"
+../camera_test.cpp: In function ‘int main()’:
+../camera_test.cpp:11:25: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+  camera_init("test name");
+                         ^
+../camera_test.cpp:12:30: warning: deprecated conversion from string constant to ‘char*’ [-Wwrite-strings]
+  camera_takePhoto("test path");
+                              ^
+Finished building: ../camera_test.cpp
+ 
+Building target: camera
+Invoking: GCC C++ Linker
+g++  -o "camera"  ./src/camera.o  ./camera_test.o   
+Finished building target: camera
+ 
+
+02:22:44 Build Finished (took 114ms)
+
