@@ -16,7 +16,7 @@ typedef struct camera_s camera;
 #define TYPE_CAMERA 2
 
 struct camera_s {
-	char last_img_path[30];
+	char last_img_name[30];
 };
 
 struct telemetry_s {

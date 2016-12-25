@@ -7,6 +7,7 @@
 
 
 #include <sys/stat.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
@@ -14,11 +15,13 @@
 #include "pipe.h"
 
 #define PIPE_NAME "/tmp/telemetry_pipe"
-#define BUFSIZE   50
 
 static int file_descriptor = -1;
 
 /**
+ * Make a pipe with name PIPE_NAME,
+ * which is specific for this module.
+ *
  * return 0 - success
  * 	      1 - error
  */
@@ -31,6 +34,11 @@ int telemetryPipe_remove() {
 }
 
 /**
+ * Open pipe to reading data.
+ *
+ * Interrupt program execution until writers not connected
+ * to pipe.
+ *
  * return file descriptor or -1 if file can't be opened
  */
 int telemetryPipe_openReadOnly() {
@@ -41,6 +49,11 @@ int telemetryPipe_openReadOnly() {
 }
 
 /**
+ * Open pipe to write data.
+ *
+ * Pipe must be already opened for reading when this function
+ * called.
+ *
  * return file descriptor or -1 if file can't be opened
  */
 int telemetryPipe_openWriteOnly() {

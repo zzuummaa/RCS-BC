@@ -7,19 +7,32 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "src/camera.h"
 #include "pipe.h"
 #include "structs.h"
 
+#define IMG_PATH "/home/img"
+
+/**
+ * Write file name to dst
+ */
+void formatted_filename(char* dst) {
+	time_t t = time(NULL);
+	tm* aTm = localtime(&t);
+
+	sprintf(dst, "%s/img%d-%d-%d.jpg",
+			IMG_PATH, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
+}
+
 int main() {
-	char img_path[30] = "/home/img";
 	unsigned int counter = 0;
 
 	camera_init("test name");
 
 	if (telemetryPipe_openWriteOnly() == -1) {
-		printf("Can't open pipe");
+		printf("Can't open pipe\n");
 		return 1;
 	}
 
@@ -27,9 +40,9 @@ int main() {
 		pipe_pack pp;
 		pp.type = 2;
 		camera *cam = (camera*)pp.data;
-		sprintf(cam->last_img_path, "%s/img%u.jpg", img_path, counter);
+		formatted_filename(cam->last_img_name);
 
-		if (camera_takePhoto(cam->last_img_path) == 1) {
+		if (camera_takePhoto(cam->last_img_name) == 1) {
 			counter++;
 			telemetryPipe_write(&pp);
 		}

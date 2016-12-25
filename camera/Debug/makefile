@@ -45,7 +45,7 @@ all: camera
 camera: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L"/home/zzuummaa/workspace/RosCanSat/telemetry/include" -o "camera" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++  -o "camera" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

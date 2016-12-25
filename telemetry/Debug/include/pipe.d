@@ -1,3 +1,3 @@
-include/pipe.d: ../include/pipe.c ../include/pipe.h
+include/pipe.d: ../include/pipe.cpp ../include/pipe.h
 
 ../include/pipe.h:
