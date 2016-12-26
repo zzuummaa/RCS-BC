@@ -5,7 +5,7 @@
  *      Author: zzuummaa
  */
 
-#include "structs.h"
+#include "../include_tel/structs.h"
 
 typedef void (*funct)(telemetry *tel, pipe_pack *pp);
 

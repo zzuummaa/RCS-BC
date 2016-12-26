@@ -8,8 +8,8 @@
 #include "stdio.h"
 
 #include "filewriter.h"
-#include "include/pipe.h"
-#include "include/structs.h"
+#include "include_tel/pipe.h"
+#include "include_tel/structs.h"
 
 int main() {
 	telemetryPipe_make();

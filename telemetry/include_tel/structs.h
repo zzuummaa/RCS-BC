@@ -8,7 +8,7 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
-#include "pipe.h"
+#include "../include_tel/pipe.h"
 
 typedef struct telemetry_s telemetry;
 typedef struct camera_s camera;

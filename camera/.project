@@ -26,9 +26,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>include</name>
+			<name>include_tel</name>
 			<type>2</type>
-			<location>/home/zzuummaa/workspace/RosCanSat/telemetry/include</location>
+			<location>C:/Users/Cntgfy/workspace/RosCanSat/telemetry/include_tel</location>
 		</link>
 	</linkedResources>
 </projectDescription>

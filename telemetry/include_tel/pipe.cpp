@@ -5,14 +5,15 @@
  *      Author: zzuummaa
  */
 
+#include "pipe.h"
 
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
 
-#include "pipe.h"
 
 #define PIPE_NAME "/tmp/telemetry_pipe"
 

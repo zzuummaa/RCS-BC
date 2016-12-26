@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "../telemetry/include_tel/pipe.h"
+#include "../telemetry/include_tel/structs.h"
 #include "src/camera.h"
-#include "pipe.h"
-#include "structs.h"
 
 #define IMG_PATH "/home/img"
 

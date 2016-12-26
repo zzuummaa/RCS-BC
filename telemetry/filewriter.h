@@ -14,7 +14,8 @@
 #define FILEWRITER_H_
 
 #include <stdio.h>
-#include "include/structs.h"
+
+#include "include_tel/structs.h"
 
 #define OUT_FILE_NAME "/home/telemetry.txt"
 

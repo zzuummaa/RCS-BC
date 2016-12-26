@@ -1,4 +1,0 @@
-camera	/home/img/img0-38-17.jpg
-camera	/home/img/img0-38-19.jpg
-camera	/home/img/img0-38-21.jpg
-camera	/home/img/img0-38-23.jpg
