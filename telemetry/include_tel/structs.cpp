@@ -7,14 +7,21 @@
 
 #include "../include_tel/structs.h"
 
-typedef void (*funct)(telemetry *tel, pipe_pack *pp);
+typedef void (*funct)(telemetry *tel, const pipe_pack *pp);
 
-void camera_update(telemetry *tel, pipe_pack *pp) {
+void camera_update(telemetry *tel, const pipe_pack *pp) {
 	camera *cam = (camera*)(pp->data);
 	tel->cam = *cam;
 }
 
-int telemetry_update(telemetry *tel, pipe_pack *pp) {
+/**
+ * Add current info to telemetry pack
+ * from pipe_pack
+ *
+ * Looking for the appropriate update procedure
+ * for type pack
+ */
+int telemetry_update(telemetry *tel, const pipe_pack *pp) {
 	funct f;
 
 	switch (pp->type) {

@@ -5,24 +5,27 @@
  *      Author: zzuummaa
  */
 
+/**
+ * Description:
+ * This module contains definitions of telemetry
+ * packs and procedures for handling this packs
+ */
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
 #include "../include_tel/pipe.h"
 
-typedef struct telemetry_s telemetry;
-typedef struct camera_s camera;
-
-#define TYPE_CAMERA 2
-
-struct camera_s {
+typedef struct {
 	char last_img_name[30];
-};
+} camera;
 
-struct telemetry_s {
+/**
+ * Pack of all system condition
+ */
+typedef struct {
 	camera cam;
-};
+} telemetry;
 
-int telemetry_update(telemetry *tel, pipe_pack *pp);
+int telemetry_update(telemetry *tel, const pipe_pack *pp);
 
 #endif /* STRUCTS_H_ */

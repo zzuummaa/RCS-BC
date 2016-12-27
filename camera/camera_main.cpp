@@ -13,7 +13,7 @@
 #include "../telemetry/include_tel/structs.h"
 #include "src/camera.h"
 
-#define IMG_PATH "/home/img"
+#define IMG_PATH "img"
 
 /**
  * Write file name to dst
@@ -38,7 +38,7 @@ int main() {
 
 	while (1) {
 		pipe_pack pp;
-		pp.type = 2;
+		pp.type = TYPE_CAMERA;
 		camera *cam = (camera*)pp.data;
 		formatted_filename(cam->last_img_name);
 

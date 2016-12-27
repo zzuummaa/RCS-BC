@@ -11,7 +11,7 @@
 
 int camera_init(char* camera_name);
 
-int camera_takePhoto(char* photo_path);
+int camera_takePhoto(char* photo_name);
 
 
 #endif /* CAMERA_H_ */

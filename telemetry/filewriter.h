@@ -17,7 +17,7 @@
 
 #include "include_tel/structs.h"
 
-#define OUT_FILE_NAME "/home/telemetry.txt"
+#define OUT_FILE_NAME "telemetry.txt"
 
 class filewriter {
 public:

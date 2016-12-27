@@ -8,14 +8,17 @@
 #ifndef PIPE_H_
 #define PIPE_H_
 
-typedef struct pipe_pack_s pipe_pack;
-
 #define PIPE_DATA_SIZE 50
 
-struct pipe_pack_s {
+/**
+ * Values of expected data type
+ */
+#define TYPE_CAMERA 2
+
+typedef struct {
 	unsigned short type;
 	unsigned char data[PIPE_DATA_SIZE];
-};
+} pipe_pack;
 
 int telemetryPipe_make();
 int telemetryPipe_remove();
