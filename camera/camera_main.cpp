@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "../telemetry/include_tel/pipe.h"
 #include "../telemetry/include_tel/structs.h"
@@ -26,26 +27,35 @@ void formatted_filename(char* dst) {
 			IMG_PATH, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
 }
 
-int main() {
-	unsigned int counter = 0;
+void camera_callback(char *photo_name, int status) {
+	if (status != 0) {
+		printf("camera: take photo failed\n");
+		return;
+	}
 
-	camera_init("test name");
+	pipe_pack pp;
+	pp.type = TYPE_CAMERA;
+
+	camera *cam = (camera*)pp.data;
+	strcpy(cam->last_img_name, photo_name);
+
+	printf("camera: take photo with path '%s'\n", photo_name);
+	telemetryPipe_write(&pp);
+}
+
+int main() {
+	camera_init();
 
 	if (telemetryPipe_openWriteOnly() == -1) {
 		printf("Can't open pipe\n");
 		return 1;
 	}
 
+	char photo_name[40];
 	while (1) {
-		pipe_pack pp;
-		pp.type = TYPE_CAMERA;
-		camera *cam = (camera*)pp.data;
-		formatted_filename(cam->last_img_name);
-
-		if (camera_takePhoto(cam->last_img_name) == 1) {
-			counter++;
-			telemetryPipe_write(&pp);
-		}
+		memset(photo_name, 0, sizeof(photo_name));
+		formatted_filename(photo_name);
+		camera_takePhoto(photo_name, &camera_callback);
 		sleep(2);
 	}
 

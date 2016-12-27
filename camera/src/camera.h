@@ -8,10 +8,11 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
+typedef void (*take_photo_callback)(char*, int);
 
-int camera_init(char* camera_name);
+int camera_init();
 
-int camera_takePhoto(char* photo_name);
+void camera_takePhoto(char* photo_name, take_photo_callback tpc);
 
 
 #endif /* CAMERA_H_ */
