@@ -48,7 +48,7 @@ void camera_takePhoto(char* photo_name, take_photo_callback tpc) {
 	if (fork() == 0) {
 		if (fork() != 0) {
 			char tmp[40];
-			strcpy(tmp, photo_name); //Fuck my dig, shitass, I made a copy of this string!!!
+			strcpy(tmp, photo_name); //I fucked this line and will fuck you if this line will disappear from here
 
 			int status;
 			wait(&status);

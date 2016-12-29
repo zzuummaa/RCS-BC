@@ -12,9 +12,10 @@
 #include "include_tel/structs.h"
 
 int main() {
-	telemetryPipe_make();
+	int fd;
+	pipe_make(TELEMETRY_PIPE);
 	printf("Pipe waiting for writers...\n");
-	telemetryPipe_openReadOnly();
+	fd = pipe_openReadOnly(TELEMETRY_PIPE);
 	printf("Pipe opened\n");
 
 	filewriter fw;
@@ -31,14 +32,14 @@ int main() {
 	while (1) {
 		pipe_pack pp;
 		pp.type = 0;
-		if (telemetryPipe_read(&pp) == 0) continue;
+		if (pipe_read(fd, &pp) == 0) continue;
 		telemetry_update(&tel, &pp);
 		fw.write(&tel);
 		printf("camera\t%s\n", tel.cam.last_img_name);
 	}
 
-	telemetryPipe_close();
-	telemetryPipe_remove();
+	pipe_close(fd);
+	pipe_remove(TELEMETRY_PIPE);
 	fw.fileClose();
 	return 0;
 }

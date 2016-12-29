@@ -9,12 +9,15 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #include "../telemetry/include_tel/pipe.h"
 #include "../telemetry/include_tel/structs.h"
 #include "src/camera.h"
 
 #define IMG_PATH "img"
+
+int fd;
 
 /**
  * Write file name to dst
@@ -28,7 +31,7 @@ void formatted_filename(char* dst) {
 }
 
 void camera_callback(char *photo_name, int status) {
-	if (status != 0) {
+	if ( WIFEXITED(status) != 1 ) {
 		printf("camera: take photo failed\n");
 		return;
 	}
@@ -40,13 +43,14 @@ void camera_callback(char *photo_name, int status) {
 	strcpy(cam->last_img_name, photo_name);
 
 	printf("camera: take photo with path '%s'\n", photo_name);
-	telemetryPipe_write(&pp);
+	pipe_write(fd, &pp);
 }
 
 int main() {
 	camera_init();
 
-	if (telemetryPipe_openWriteOnly() == -1) {
+	fd = pipe_openWriteOnly(TELEMETRY_PIPE);
+	if (fd == -1) {
 		printf("Can't open pipe\n");
 		return 1;
 	}

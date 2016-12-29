@@ -17,8 +17,6 @@
 
 #define PIPE_NAME "/tmp/telemetry_pipe"
 
-static int file_descriptor = -1;
-
 /**
  * Make a pipe with name PIPE_NAME,
  * which is specific for this module.
@@ -26,12 +24,12 @@ static int file_descriptor = -1;
  * return 0 - success
  * 	      1 - error
  */
-int telemetryPipe_make() {
-	return mkfifo(PIPE_NAME, 0777);
+int pipe_make(char *pipe_name) {
+	return mkfifo(pipe_name, 0777);
 }
 
-int telemetryPipe_remove() {
-	return remove(PIPE_NAME);
+int pipe_remove(char *pipe_name) {
+	return remove(pipe_name);
 }
 
 /**
@@ -42,10 +40,9 @@ int telemetryPipe_remove() {
  *
  * return file descriptor or -1 if file can't be opened
  */
-int telemetryPipe_openReadOnly() {
-	if (file_descriptor != -1) return -1;
+int pipe_openReadOnly(char *pipe_name) {
+	int file_descriptor = open(PIPE_NAME, O_RDONLY);
 
-	file_descriptor = open(PIPE_NAME, O_RDONLY);
 	return file_descriptor;
 }
 
@@ -57,16 +54,13 @@ int telemetryPipe_openReadOnly() {
  *
  * return file descriptor or -1 if file can't be opened
  */
-int telemetryPipe_openWriteOnly() {
-	if (file_descriptor != -1) return -1;
+int pipe_openWriteOnly(char *pipe_name) {
+	int file_descriptor = open(PIPE_NAME, O_WRONLY);
 
-	file_descriptor = open(PIPE_NAME, O_WRONLY);
 	return file_descriptor;
 }
 
-int telemetryPipe_close() {
-	file_descriptor = -1;
-
+int pipe_close(int file_descriptor) {
 	return close(file_descriptor);
 }
 
@@ -76,7 +70,7 @@ int telemetryPipe_close() {
  * return 1 - success readed
  * 		  0 - appeared errors
  */
-int telemetryPipe_read(pipe_pack* pp) {
+int pipe_read(int file_descriptor, pipe_pack* pp) {
 	char* buf = (char*) pp;
 
 	if ( (read(file_descriptor, buf, sizeof(pipe_pack))) != sizeof(pipe_pack) ) {
@@ -86,7 +80,7 @@ int telemetryPipe_read(pipe_pack* pp) {
 	}
 }
 
-int telemetryPipe_write(const pipe_pack* pp) {
+int pipe_write(int file_descriptor, const pipe_pack* pp) {
 	char* buf = (char*) pp;
 
 	if (write(file_descriptor, buf, sizeof(pipe_pack)) != sizeof(pipe_pack)) {
