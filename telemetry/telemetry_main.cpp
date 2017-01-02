@@ -6,17 +6,32 @@
  */
 
 #include "stdio.h"
+#include <signal.h>
+#include <stdlib.h>
 
 #include "filewriter.h"
 #include "include_tel/pipe.h"
 #include "include_tel/structs.h"
 
+void remove_pipe(int status) {
+	printf("Signal quit\n");
+	pipe_remove(PIPE_TELEMETRY);
+	exit(0);
+}
+
 int main() {
+	signal(SIGTERM, remove_pipe);
+
 	int fd;
-	pipe_make(TELEMETRY_PIPE);
+	pipe_make(PIPE_TELEMETRY);
 	printf("Pipe waiting for writers...\n");
-	fd = pipe_openReadOnly(TELEMETRY_PIPE);
-	printf("Pipe opened\n");
+	fd = pipe_openReadOnly(PIPE_TELEMETRY);
+	if (fd != -1) {
+		printf("Pipe opened\n");
+	} else {
+		printf("Pipe error opening\n");
+		return 1;
+	}
 
 	filewriter fw;
 
@@ -39,7 +54,7 @@ int main() {
 	}
 
 	pipe_close(fd);
-	pipe_remove(TELEMETRY_PIPE);
+	pipe_remove(PIPE_TELEMETRY);
 	fw.fileClose();
 	return 0;
 }

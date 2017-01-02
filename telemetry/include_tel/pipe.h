@@ -13,7 +13,8 @@
 /**
  * String constants for pipe names
  */
-#define TELEMETRY_PIPE "/tmp/telemetry_pipe"
+#define PIPE_TELEMETRY	"/tmp/pipe_telemetry"
+#define PIPE_TESTER		"/tmp/pipe_tester"
 
 /**
  * Values of expected data type
@@ -25,10 +26,10 @@ typedef struct {
 	unsigned char data[PIPE_DATA_SIZE];
 } pipe_pack;
 
-int pipe_make(char *pipe_name);
-int pipe_remove(char *pipe_name);
-int pipe_openReadOnly(char *pipe_name);
-int pipe_openWriteOnly(char *pipe_name);
+int pipe_make(const char *pipe_name);
+int pipe_remove(const char *pipe_name);
+int pipe_openReadOnly(const char *pipe_name);
+int pipe_openWriteOnly(const char *pipe_name);
 int pipe_close(int file_descriptor);
 int pipe_read(int file_descriptor, pipe_pack* pp);
 int pipe_write(int file_descriptor, const pipe_pack* pp);

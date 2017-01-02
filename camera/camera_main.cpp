@@ -11,13 +11,14 @@
 #include <string.h>
 #include <sys/wait.h>
 
-#include "../telemetry/include_tel/pipe.h"
-#include "../telemetry/include_tel/structs.h"
+#include "pipe.h"
+#include "structs.h"
+#include "camera_manager.h"
 #include "src/camera.h"
 
 #define IMG_PATH "img"
 
-int fd;
+int telfd, testfd, pid;
 
 /**
  * Write file name to dst
@@ -31,28 +32,42 @@ void formatted_filename(char* dst) {
 }
 
 void camera_callback(char *photo_name, int status) {
-	if ( WIFEXITED(status) != 1 ) {
+	if ( GET_EXIT_STATUS(status) != 1 ) {
 		printf("camera: take photo failed\n");
 		return;
 	}
 
-	pipe_pack pp;
-	pp.type = TYPE_CAMERA;
+	pipe_pack telpp;
+	telpp.type = TYPE_CAMERA;
 
-	camera *cam = (camera*)pp.data;
+	camera *cam = (camera*)telpp.data;
 	strcpy(cam->last_img_name, photo_name);
 
-	printf("camera: take photo with path '%s'\n", photo_name);
-	pipe_write(fd, &pp);
+	printf("camera: take photo with status=%d path '%s'\n", status, photo_name);
+	pipe_write(telfd, &telpp);
+
+	pipe_pack testpp;
+	testpp.type = TYPE_CAMERA;
+
+	camera_info *cami = (camera_info*)testpp.data;
+	cami->pid = pid;
+	cami->status = status == 0 ? 1 : 0;
+
+	pipe_write(testfd, &testpp);
 }
 
 int main() {
 	camera_init();
+	pid = getpid();
 
-	fd = pipe_openWriteOnly(TELEMETRY_PIPE);
-	if (fd == -1) {
-		printf("Can't open pipe\n");
-		return 1;
+	telfd = pipe_openWriteOnly(PIPE_TELEMETRY);
+	if (telfd == -1) {
+		printf("Can't open telemetry pipe\n");
+	}
+
+	testfd = pipe_openWriteOnly(PIPE_TESTER);
+	if (testfd == -1) {
+		printf("Can't open tester pipe\n");
 	}
 
 	char photo_name[40];

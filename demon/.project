@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>camera</name>
+	<name>demon</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -24,16 +24,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>include_tel</name>
-			<type>2</type>
-			<location>C:/Users/Cntgfy/workspace/RosCanSat/telemetry/include_tel</location>
-		</link>
-		<link>
-			<name>include_tester</name>
-			<type>2</type>
-			<location>C:/Users/Cntgfy/workspace/RosCanSat/tester/include_tester</location>
-		</link>
-	</linkedResources>
 </projectDescription>

@@ -14,9 +14,6 @@
 #include <string.h>
 #include <stdio.h>
 
-
-#define PIPE_NAME "/tmp/telemetry_pipe"
-
 /**
  * Make a pipe with name PIPE_NAME,
  * which is specific for this module.
@@ -24,11 +21,11 @@
  * return 0 - success
  * 	      1 - error
  */
-int pipe_make(char *pipe_name) {
+int pipe_make(const char *pipe_name) {
 	return mkfifo(pipe_name, 0777);
 }
 
-int pipe_remove(char *pipe_name) {
+int pipe_remove(const char *pipe_name) {
 	return remove(pipe_name);
 }
 
@@ -40,8 +37,8 @@ int pipe_remove(char *pipe_name) {
  *
  * return file descriptor or -1 if file can't be opened
  */
-int pipe_openReadOnly(char *pipe_name) {
-	int file_descriptor = open(PIPE_NAME, O_RDONLY);
+int pipe_openReadOnly(const char *pipe_name) {
+	int file_descriptor = open(pipe_name, O_RDONLY);
 
 	return file_descriptor;
 }
@@ -54,8 +51,8 @@ int pipe_openReadOnly(char *pipe_name) {
  *
  * return file descriptor or -1 if file can't be opened
  */
-int pipe_openWriteOnly(char *pipe_name) {
-	int file_descriptor = open(PIPE_NAME, O_WRONLY);
+int pipe_openWriteOnly(const char *pipe_name) {
+	int file_descriptor = open(pipe_name, O_WRONLY);
 
 	return file_descriptor;
 }
@@ -73,7 +70,7 @@ int pipe_close(int file_descriptor) {
 int pipe_read(int file_descriptor, pipe_pack* pp) {
 	char* buf = (char*) pp;
 
-	if ( (read(file_descriptor, buf, sizeof(pipe_pack))) != sizeof(pipe_pack) ) {
+	if ( read(file_descriptor, buf, sizeof(pipe_pack)) != sizeof(pipe_pack) ) {
 		return 0;
 	} else {
 		return 1;
@@ -81,6 +78,8 @@ int pipe_read(int file_descriptor, pipe_pack* pp) {
 }
 
 int pipe_write(int file_descriptor, const pipe_pack* pp) {
+	if (file_descriptor == -1) return 1;
+
 	char* buf = (char*) pp;
 
 	if (write(file_descriptor, buf, sizeof(pipe_pack)) != sizeof(pipe_pack)) {

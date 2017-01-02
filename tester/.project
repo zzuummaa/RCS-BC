@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>camera</name>
+	<name>tester</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -29,11 +29,6 @@
 			<name>include_tel</name>
 			<type>2</type>
 			<location>C:/Users/Cntgfy/workspace/RosCanSat/telemetry/include_tel</location>
-		</link>
-		<link>
-			<name>include_tester</name>
-			<type>2</type>
-			<location>C:/Users/Cntgfy/workspace/RosCanSat/tester/include_tester</location>
 		</link>
 	</linkedResources>
 </projectDescription>

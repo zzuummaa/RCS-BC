@@ -54,6 +54,7 @@ void camera_takePhoto(char* photo_name, take_photo_callback tpc) {
 			wait(&status);
 
 			initCallback(tmp, tpc, status);
+			exit(0);
 		} else {
 			initTakingPhoto(photo_name);
 		}

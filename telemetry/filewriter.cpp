@@ -7,7 +7,7 @@
 
 #include "filewriter.h"
 
-int filewriter::fileOpen(char *file_name) {
+int filewriter::fileOpen(const char *file_name) {
 	f = fopen(file_name, "a");
 
 	return f == NULL ? 0 : 1;

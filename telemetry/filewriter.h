@@ -23,7 +23,7 @@ class filewriter {
 public:
 	FILE *f = NULL;
 
-	int fileOpen(char *file_name);
+	int fileOpen(const char *file_name);
 	int write(telemetry *tel);
 	int fileClose();
 	filewriter() {
