@@ -15,6 +15,7 @@
  */
 #define PIPE_TELEMETRY	"/tmp/pipe_telemetry"
 #define PIPE_TESTER		"/tmp/pipe_tester"
+#define PIPE_CAM_IMAGES "/tmp/pipe_images"
 
 /**
  * Values of expected data type

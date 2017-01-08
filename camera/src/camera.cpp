@@ -13,10 +13,21 @@
 
 #include "camera.h"
 
-int camera_init() {
-	printf("camera: init success\n");
+int camera_init(char* file_name) {
+	char* cmd[] = {"raspistill", "-t", "500", "-o", "-"};
 
-	return 1;
+	int pid = fork();
+	switch (pid) {
+	case -1 :
+		return 0;
+	case 0  :
+		freopen("out.jpg", "w", stdout);
+		//if (stdout == NULL) exit(1);
+		execv("/usr/bin/raspistill", cmd);
+	default :
+		printf("camera: init success\n");
+		return 1;
+	}
 }
 
 void initTakingPhoto(char* photo_name) {

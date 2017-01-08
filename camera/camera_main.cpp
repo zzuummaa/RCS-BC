@@ -7,6 +7,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -15,10 +16,14 @@
 #include "structs.h"
 #include "camera_manager.h"
 #include "src/camera.h"
+#include "src/photo_parser.h"
 
 #define IMG_PATH "img"
 
-int telfd, testfd, pid;
+int telfd;
+int testfd;
+int imgfd;
+int pid;
 
 /**
  * Write file name to dst
@@ -27,12 +32,12 @@ void formatted_filename(char* dst) {
 	time_t t = time(NULL);
 	tm* aTm = localtime(&t);
 
-	sprintf(dst, "%s/img%d-%d-%d.jpg",
+	sprintf(dst, "./%s/img%d-%d-%d.jpg",
 			IMG_PATH, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
 }
 
 void camera_callback(char *photo_name, int status) {
-	if ( GET_EXIT_STATUS(status) != 1 ) {
+	if ( status != 0 ) {
 		printf("camera: take photo failed\n");
 		return;
 	}
@@ -56,8 +61,23 @@ void camera_callback(char *photo_name, int status) {
 	pipe_write(testfd, &testpp);
 }
 
+int save_image(char *name, void *buff, unsigned int size) {
+	FILE *f = fopen(name, "w");
+	if (f == NULL) {
+		return -1;
+	}
+
+	int count = fwrite(buff, 1, size, f);
+	fclose(f);
+
+	return count;
+}
+
 int main() {
-	camera_init();
+	pipe_make(PIPE_CAM_IMAGES);
+	int res = camera_init(PIPE_CAM_IMAGES);
+	imgfd = pipe_openReadOnly(PIPE_CAM_IMAGES);
+
 	pid = getpid();
 
 	telfd = pipe_openWriteOnly(PIPE_TELEMETRY);
@@ -70,12 +90,28 @@ int main() {
 		printf("Can't open tester pipe\n");
 	}
 
+	int SIZE = 0xffffff;
+	char *imgbuff = (char*)malloc(SIZE);
 	char photo_name[40];
 	while (1) {
+		int size = photo_readPhoto(imgfd, imgbuff, SIZE);
+		if (size == -1) {
+			printf("Error reading image\n");
+			return 1;
+		}
+		if (size == 0) continue;
+
 		memset(photo_name, 0, sizeof(photo_name));
 		formatted_filename(photo_name);
-		camera_takePhoto(photo_name, &camera_callback);
-		sleep(2);
+
+		int bytes = save_image("img.jpg", imgbuff, size);
+		if (bytes != -1) {
+			printf("Saved %d bytes\n", bytes);
+		} else {
+			printf("Can't save image to file '%s'\n", photo_name);
+		}
+
+		//camera_takePhoto(photo_name, &camera_callback);
 	}
 
 	return 0;

@@ -22,6 +22,15 @@ void remove_pipe(int status) {
 int main() {
 	signal(SIGTERM, remove_pipe);
 
+	filewriter fw;
+
+	if (fw.f != NULL) {
+		printf("File opened\n");
+	} else {
+		printf("File can't be opened\n");
+		return 1;
+	}
+
 	int fd;
 	pipe_make(PIPE_TELEMETRY);
 	printf("Pipe waiting for writers...\n");
@@ -30,15 +39,6 @@ int main() {
 		printf("Pipe opened\n");
 	} else {
 		printf("Pipe error opening\n");
-		return 1;
-	}
-
-	filewriter fw;
-
-	if (fw.f != NULL) {
-		printf("File opened\n");
-	} else {
-		printf("File can't be opened\n");
 		return 1;
 	}
 

@@ -24,7 +24,7 @@
  */
 typedef void (*take_photo_callback)(char*, int);
 
-int camera_init();
+int camera_init(char *file_name);
 
 void camera_takePhoto(char* photo_name, take_photo_callback tpc);
 
