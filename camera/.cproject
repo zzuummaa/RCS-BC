@@ -62,8 +62,9 @@
 								<option id="gnu.c.compiler.option.debugging.level.692990954" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.500398701" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.127885318" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -72,8 +73,9 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.759687910" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1354523184" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1544436220" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -81,8 +83,12 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.527965128" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.paths.306999270" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.1709079172" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="raspicam"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1875931926" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -92,16 +98,16 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1925133856" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1966888580" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1685364525" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1434008339" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="include_tester|include_tel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="include_tel"/>
+						<entry excluding="cansat|include_tester|include_tel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cansat"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="include_tester"/>
 					</sourceEntries>
 				</configuration>

@@ -10,7 +10,7 @@
 typedef void (*funct)(telemetry *tel, const pipe_pack *pp);
 
 void camera_update(telemetry *tel, const pipe_pack *pp) {
-	camera *cam = (camera*)(pp->data);
+	tel_camera *cam = (tel_camera*)(pp->data);
 	tel->cam = *cam;
 }
 

@@ -20,7 +20,7 @@ char* image::getBuff() {
 	return buff;
 }
 
-image::~image() {
+void image::release() {
 	free(buff);
 	buff = NULL;
 }

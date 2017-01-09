@@ -17,13 +17,13 @@
 
 typedef struct {
 	char last_img_name[30];
-} camera;
+} tel_camera;
 
 /**
  * Pack of all system condition
  */
 typedef struct {
-	camera cam;
+	tel_camera cam;
 } telemetry;
 
 int telemetry_update(telemetry *tel, const pipe_pack *pp);

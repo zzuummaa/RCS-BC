@@ -15,10 +15,24 @@ private:
 	int size;
 	char* buff;
 public:
+	/**
+	 * ppBuff - binary image in RGB format
+	 * w	  - width
+	 * h	  - height
+	 */
 	image(unsigned char* ppmBuff, int w, int h);
+	/**
+	 * return image data size
+	 */
 	int getSize();
+	/**
+	 * return pointer to img data
+	 */
 	char* getBuff();
-	~image();
+	/**
+	 * Frees heap resources
+	 */
+	void release();
 };
 
 

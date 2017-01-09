@@ -12,11 +12,11 @@
 #include <string.h>
 #include <sys/wait.h>
 
-#include "pipe.h"
-#include "structs.h"
 #include "camera_manager.h"
-#include "src/camera.h"
-#include "src/photo_parser.h"
+
+#include "pipe.h"
+#include "filewriter.h"
+#include "camera.h"
 
 #define IMG_PATH "img"
 
@@ -32,11 +32,11 @@ void formatted_filename(char* dst) {
 	time_t t = time(NULL);
 	tm* aTm = localtime(&t);
 
-	sprintf(dst, "./%s/img%d-%d-%d.jpg",
+	sprintf(dst, "%s/img%d-%d-%d.bmp",
 			IMG_PATH, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
 }
 
-void camera_callback(char *photo_name, int status) {
+/*void camera_callback(char *photo_name, int status) {
 	if ( status != 0 ) {
 		printf("camera: take photo failed\n");
 		return;
@@ -59,22 +59,41 @@ void camera_callback(char *photo_name, int status) {
 	cami->status = status == 0 ? 1 : 0;
 
 	pipe_write(testfd, &testpp);
-}
-
-int save_image(char *name, void *buff, unsigned int size) {
-	FILE *f = fopen(name, "w");
-	if (f == NULL) {
-		return -1;
-	}
-
-	int count = fwrite(buff, 1, size, f);
-	fclose(f);
-
-	return count;
-}
+}*/
 
 int main() {
-	pipe_make(PIPE_CAM_IMAGES);
+	pipeWriter pwriter(PIPE_TELEMETRY, TYPE_CAMERA);
+	pwriter.openPipe();
+
+	filewriter fwriter;
+
+	camera cam;
+	if ( !cam.open() ) {
+		return 1;
+	}
+
+	printf("Waiting for camera 3 seconds...\n");
+	sleep(3);
+
+	char fileName[100];
+	while (true) {
+		printf("\n");
+
+		cam.grab();
+
+		image img = cam.getLastImage();
+
+		formatted_filename(fileName);
+		fwriter.fileOpen(fileName, "w");
+		fwriter.write(img.getBuff(), img.getSize());
+
+		fwriter.fileClose();
+		img.release();
+
+		sleep(2);
+	}
+
+	/*pipe_make(PIPE_CAM_IMAGES);
 	int res = camera_init(PIPE_CAM_IMAGES);
 	imgfd = pipe_openReadOnly(PIPE_CAM_IMAGES);
 
@@ -112,7 +131,7 @@ int main() {
 		}
 
 		//camera_takePhoto(photo_name, &camera_callback);
-	}
+	}*/
 
 	return 0;
 }

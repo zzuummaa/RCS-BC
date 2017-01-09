@@ -20,13 +20,13 @@
  */
 /*========================================================*/
 
-void pipe::init(char* name, PACK_TYPE pack_type) {
+void mypipe::init(char* name, PACK_TYPE pack_type) {
 	this->fd = -1;
 	this->pack_type = pack_type;
 	strcpy(this->name, name);
 }
 
-int pipe::close() {
+int mypipe::close() {
 	return pipe_close(fd);
 }
 /*========================================================*/

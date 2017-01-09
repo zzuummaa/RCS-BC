@@ -15,7 +15,6 @@
  */
 #define PIPE_TELEMETRY	"/tmp/pipe_telemetry"
 #define PIPE_TESTER		"/tmp/pipe_tester"
-#define PIPE_CAM_IMAGES "/tmp/pipe_images"
 
 /**
  * Values of expected data type
@@ -30,7 +29,7 @@ typedef struct {
 	unsigned char data[PIPE_DATA_SIZE];
 } pipe_pack;
 
-class pipe {
+class mypipe {
 protected:
 	char name[100];
 	int pack_type;
@@ -40,7 +39,7 @@ public:
 	int close();
 };
 
-class pipeWriter : public pipe {
+class pipeWriter : public mypipe {
 public:
 	pipeWriter(char* name) {
 		init(name, TYPE_CAMERA);
@@ -50,7 +49,7 @@ public:
 	int write_(char* buff, int size);
 };
 
-class pipeReader : public pipe {
+class pipeReader : public mypipe {
 public:
 	pipeReader(char* name) {
 		init(name, TYPE_NOTHING);

@@ -26,9 +26,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>include_tel</name>
+			<name>cansat</name>
 			<type>2</type>
-			<location>C:/Users/Cntgfy/workspace/RosCanSat/telemetry/include_tel</location>
+			<location>C:/Users/Cntgfy/workspace/RosCanSat/lib/cansat</location>
 		</link>
 		<link>
 			<name>include_tester</name>

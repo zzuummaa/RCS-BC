@@ -14,5 +14,7 @@ image camera::getLastImage() {
 	this->retrieve(data, raspicam::RASPICAM_FORMAT_RGB);
 
 	image image(data, getWidth(), getHeight());
+
+	delete[] data;
 	return image;
 }

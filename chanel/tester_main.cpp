@@ -55,7 +55,7 @@ const char PPM_TITLE_FORMAT[] = "P6\n%d %d\n%d\n";
 
 int main ( int argc,char **argv ) {
 
-    raspicam::RaspiCam Camera; //Cmaera object
+    /*raspicam::RaspiCam Camera; //Cmaera object
 
     //Open camera
 
@@ -93,7 +93,7 @@ int main ( int argc,char **argv ) {
 
     //free resrources
 
-    delete data;
+    delete data;*/
 
     return 0;
 
