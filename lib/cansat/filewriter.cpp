@@ -23,8 +23,15 @@ int filewriter::fileOpen(const char *file_name, const char* mode) {
 	}
 }
 
+/**
+ * return 1 - success write data
+ * 		  0 - error write data
+ */
 int filewriter::write(char* buff, int size) {
-	if (f == NULL) return 0;
+	if (f == NULL) {
+		printf("File not opened\n");
+		return 0;
+	}
 
 	if (fwrite(buff, 1, size, f) != size) {
 		printf("Error writing data to file '%s'\n", fileName);

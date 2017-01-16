@@ -62,7 +62,6 @@
 								<option id="gnu.c.compiler.option.debugging.level.627553573" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1051182848" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.923630926" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -72,7 +71,6 @@
 								<option id="gnu.cpp.compiler.option.include.paths.886600649" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1042970387" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -82,7 +80,7 @@
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\lib&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\lib&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.libs.865962708" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+								<option id="gnu.cpp.link.option.libs.865962708" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="raspicam"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.688215130" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -92,9 +90,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.105176240" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1455397017" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
-								<option id="gnu.both.asm.option.include.paths.474662681" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/telemetry/include_tel}&quot;"/>
-								</option>
+								<option id="gnu.both.asm.option.include.paths.474662681" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1220887862" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>

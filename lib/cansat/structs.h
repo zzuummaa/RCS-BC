@@ -13,7 +13,13 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
-#include "../include_tel/pipe.h"
+/**
+ * Values of expected data type
+ */
+typedef enum {
+	TYPE_NOTHING = 0,
+	TYPE_CAMERA  = 2
+} DATA_TYPE;
 
 typedef struct {
 	char last_img_name[30];
@@ -26,6 +32,7 @@ typedef struct {
 	tel_camera cam;
 } telemetry;
 
-int telemetry_update(telemetry *tel, const pipe_pack *pp);
+int telemetry_update(telemetry *tel, const char* data, DATA_TYPE type);
+//void telemetry_
 
 #endif /* STRUCTS_H_ */

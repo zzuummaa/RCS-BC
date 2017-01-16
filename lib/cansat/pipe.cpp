@@ -20,9 +20,8 @@
  */
 /*========================================================*/
 
-void mypipe::init(char* name, PACK_TYPE pack_type) {
+void mypipe::init(char* name) {
 	this->fd = -1;
-	this->pack_type = pack_type;
 	strcpy(this->name, name);
 }
 
@@ -35,12 +34,8 @@ int mypipe::close() {
  */
 /*========================================================*/
 
-pipeWriter::pipeWriter(char* name, PACK_TYPE pack_type) {
-	init(name, pack_type);
-}
-
 int pipeWriter::openPipe() {
-	int fd = open(name, O_WRONLY);
+	fd = open(name, O_WRONLY);
 
 	if (fd == -1) {
 		printf("Can't open to write pipe '%s'\n", name);
@@ -52,10 +47,13 @@ int pipeWriter::openPipe() {
 }
 
 int pipeWriter::write_(char* buff, int size) {
-	if (write(fd, buff, size) != size) {
-		printf("Error writing data to pipe '%s'\n", name);
+	int count = write(fd, buff, size);
+
+	if (count != size) {
+		printf("Error writing data to pipe '%s' all wrote %d bytes\n", name, count);
 		return 0;
 	} else {
+		printf("Wrote %d bytes to pipe '%s'\n", count, name);
 		return 1;
 	}
 }
@@ -67,7 +65,7 @@ int pipeWriter::write_(char* buff, int size) {
 /*========================================================*/
 
 int pipeReader::openPipe() {
-	int fd = open(name, O_WRONLY);
+	fd = open(name, O_RDONLY);
 
 	if (fd == -1) {
 		printf("Can't open to read pipe '%s'\n", name);
@@ -79,9 +77,17 @@ int pipeReader::openPipe() {
 }
 
 int pipeReader::read_(char* buff, int size) {
-	if ( read(fd, buff, sizeof(pipe_pack)) != sizeof(pipe_pack) ) {
+	int count;
+
+	do {
+		count = read(fd, buff, size);
+	} while (count == 0);
+
+	if ( count != size ) {
+		printf("Error reading data. All red %d bytes\n", count);
 		return 0;
 	} else {
+		printf("Readed %d bytes from pipe '%s'\n", count, name);
 		return 1;
 	}
 }
@@ -150,32 +156,4 @@ int pipe_openWriteOnly(const char *pipe_name) {
 
 int pipe_close(int file_descriptor) {
 	return close(file_descriptor);
-}
-
-/**
- * Read telemetry data
- *
- * return 1 - success readed
- * 		  0 - appeared errors
- */
-int pipe_read(int file_descriptor, pipe_pack* pp) {
-	char* buf = (char*) pp;
-
-	if ( read(file_descriptor, buf, sizeof(pipe_pack)) != sizeof(pipe_pack) ) {
-		return 0;
-	} else {
-		return 1;
-	}
-}
-
-int pipe_write(int file_descriptor, const pipe_pack* pp) {
-	if (file_descriptor == -1) return 1;
-
-	char* buf = (char*) pp;
-
-	if (write(file_descriptor, buf, sizeof(pipe_pack)) != sizeof(pipe_pack)) {
-		return 0;
-	} else {
-		return 1;
-	}
 }

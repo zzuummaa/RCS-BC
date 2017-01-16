@@ -63,7 +63,6 @@
 								<option id="gnu.c.compiler.option.include.paths.500398701" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.127885318" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
@@ -74,7 +73,6 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1354523184" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\SysGCC\Raspberry\arm-linux-gnueabihf\sysroot\usr\local\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1544436220" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -98,7 +96,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1925133856" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1966888580" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
 								<option id="gnu.both.asm.option.include.paths.1685364525" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tester/include_tester}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/lib/cansat}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1434008339" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
@@ -108,7 +105,6 @@
 					<sourceEntries>
 						<entry excluding="cansat|include_tester|include_tel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cansat"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="include_tester"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -184,4 +180,5 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

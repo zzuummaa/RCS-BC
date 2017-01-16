@@ -10,8 +10,10 @@
 #include <stdlib.h>
 
 #include "filewriter.h"
-#include "include_tel/pipe.h"
-#include "include_tel/structs.h"
+#include "telemetry_pipe.h"
+#include "structs.h"
+
+#define TELEMETRY_FILE "telmery.txt"
 
 void remove_pipe(int status) {
 	printf("Signal quit\n");
@@ -23,34 +25,27 @@ int main() {
 	signal(SIGTERM, remove_pipe);
 
 	filewriter fw;
-
-	if (fw.f != NULL) {
-		printf("File opened\n");
-	} else {
-		printf("File can't be opened\n");
-		return 1;
-	}
+	fw.fileOpen(TELEMETRY_FILE, "a");
 
 	int fd;
 	pipe_make(PIPE_TELEMETRY);
+
 	printf("Pipe waiting for writers...\n");
-	fd = pipe_openReadOnly(PIPE_TELEMETRY);
-	if (fd != -1) {
-		printf("Pipe opened\n");
-	} else {
-		printf("Pipe error opening\n");
-		return 1;
-	}
+	telemetryPipeReader preader(PIPE_TELEMETRY);
+	preader.openPipe();
 
 	telemetry tel;
 
 	while (1) {
+		printf("\n");
+
 		pipe_pack pp;
-		pp.type = 0;
-		if (pipe_read(fd, &pp) == 0) continue;
-		telemetry_update(&tel, &pp);
-		fw.write(&tel);
-		printf("camera\t%s\n", tel.cam.last_img_name);
+		pp.type = TYPE_NOTHING;
+		preader.read_telemetry(&pp);
+
+		telemetry_update(&tel, pp.data, pp.type);
+
+		fw.write((char*)&tel, sizeof(tel));
 	}
 
 	pipe_close(fd);

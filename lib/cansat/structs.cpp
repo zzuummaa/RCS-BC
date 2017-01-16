@@ -5,12 +5,12 @@
  *      Author: zzuummaa
  */
 
-#include "../include_tel/structs.h"
+#include "structs.h"
 
-typedef void (*funct)(telemetry *tel, const pipe_pack *pp);
+typedef void (*funct)(telemetry *tel, const char *data);
 
-void camera_update(telemetry *tel, const pipe_pack *pp) {
-	tel_camera *cam = (tel_camera*)(pp->data);
+void camera_update(telemetry *tel, const char* data) {
+	tel_camera *cam = (tel_camera*)(data);
 	tel->cam = *cam;
 }
 
@@ -21,14 +21,14 @@ void camera_update(telemetry *tel, const pipe_pack *pp) {
  * Looking for the appropriate update procedure
  * for type pack
  */
-int telemetry_update(telemetry *tel, const pipe_pack *pp) {
+int telemetry_update(telemetry *tel, const char *data, DATA_TYPE type) {
 	funct f;
 
-	switch (pp->type) {
+	switch (type) {
 	case TYPE_CAMERA: f = &camera_update; break;
 	}
 
-	(*f)(tel, pp);
+	(*f)(tel, data);
 
 	return 1;
 }

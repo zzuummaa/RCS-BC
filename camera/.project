@@ -30,10 +30,5 @@
 			<type>2</type>
 			<location>C:/Users/Cntgfy/workspace/RosCanSat/lib/cansat</location>
 		</link>
-		<link>
-			<name>include_tester</name>
-			<type>2</type>
-			<location>C:/Users/Cntgfy/workspace/RosCanSat/tester/include_tester</location>
-		</link>
 	</linkedResources>
 </projectDescription>
