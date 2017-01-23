@@ -37,6 +37,7 @@ int filewriter::write(char* buff, int size) {
 		printf("Error writing data to file '%s'\n", fileName);
 		return 0;
 	} else {
+		fflush(f);
 		printf("Wrote %d bytes to file '%s'\n", size, fileName);
 		return 1;
 	}

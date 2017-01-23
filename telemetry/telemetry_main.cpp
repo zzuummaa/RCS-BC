@@ -5,51 +5,48 @@
  *      Author: zzuummaa
  */
 
-#include "stdio.h"
+#include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "filewriter.h"
 #include "telemetry_pipe.h"
 #include "structs.h"
+#include "shm/shared_telemetry.h"
 
 #define TELEMETRY_FILE "telmery.txt"
 
-void remove_pipe(int status) {
-	printf("Signal quit\n");
-	pipe_remove(PIPE_TELEMETRY);
-	exit(0);
-}
-
 int main() {
-	signal(SIGTERM, remove_pipe);
+	if ( !shTelemetry_create() ) {
+		return 1;
+	}
+
+	shTelemetry shtel;
+	if ( !shtel.connect() ) {
+		return 1;
+	}
+
+	printf("Telemetry initilize success\n");
 
 	filewriter fw;
 	fw.fileOpen(TELEMETRY_FILE, "a");
 
-	int fd;
-	pipe_make(PIPE_TELEMETRY);
-
-	printf("Pipe waiting for writers...\n");
-	telemetryPipeReader preader(PIPE_TELEMETRY);
-	preader.openPipe();
-
-	telemetry tel;
-
+	printf("\n");
+	char buff[DEFAULT_MEM_SIZE+2];
 	while (1) {
+
+		int count = shtel.get(buff, DEFAULT_MEM_SIZE);
+		if (count < 1) continue;
+		buff[count+1] = '\r';
+		buff[count+2] = '\n';
+
+		fw.write(buff, count+2);
+
+		sleep(1);
 		printf("\n");
-
-		pipe_pack pp;
-		pp.type = TYPE_NOTHING;
-		preader.read_telemetry(&pp);
-
-		telemetry_update(&tel, pp.data, pp.type);
-
-		fw.write((char*)&tel, sizeof(tel));
 	}
 
-	pipe_close(fd);
-	pipe_remove(PIPE_TELEMETRY);
 	fw.fileClose();
 	return 0;
 }

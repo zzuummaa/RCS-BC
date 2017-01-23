@@ -15,6 +15,7 @@
 #include "telemetry_pipe.h"
 #include "filewriter.h"
 #include "camera.h"
+#include "shm/shared_telemetry.h"
 
 #define IMG_PATH "img"
 
@@ -35,8 +36,8 @@ void formatted_filename(char* dst) {
 }
 
 int main() {
-	telemetryPipeWriter pwriter(PIPE_TELEMETRY);
-	pwriter.openPipe();
+	shTelemetry shtel;
+	shtel.connect();
 
 	filewriter fwriter;
 
@@ -48,22 +49,22 @@ int main() {
 	printf("Waiting for camera 3 seconds...\n");
 	sleep(3);
 
-	char fileName[100];
+	tel_camera tcam;
 	while (true) {
 		printf("\n");
 
-		cam.grab();
+		if ( !cam.grab() ) continue;
 
 		image img = cam.getLastImage();
 
-		formatted_filename(fileName);
-		fwriter.fileOpen(fileName, "w");
+		formatted_filename(tcam.last_img_name);
+		fwriter.fileOpen(tcam.last_img_name, "w");
 		fwriter.write(img.getBuff(), img.getSize());
 
 		fwriter.fileClose();
 		img.release();
 
-		pwriter.write_telemetry(fileName, strlen(fileName), TYPE_CAMERA);
+		shtel.add(TYPE_CAMERA, (char*)&tcam, sizeof(tel_camera));
 
 		sleep(2);
 	}
