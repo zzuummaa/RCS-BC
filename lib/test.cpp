@@ -8,13 +8,21 @@
 #include <iostream>
 #include <unistd.h>
 #include <fstream>
+#include <string.h>
 
 #include "cansat/camera.h"
+#include "cansat/shm/shared_telemetry.h"
 
 using namespace std;
 
 #define IMAGE_NAME "image.bmp"
 
+/**
+ * Function for testing
+ *
+ * return 1 - test success
+ * 		  0 - test failure
+ */
 typedef int (*function)();
 
 void printResult(const char* fName, function funct) {
@@ -37,17 +45,56 @@ void printResult(const char* fName, function funct) {
 int pipeTest();
 int cameraTest();
 int multiphotoCameraTest();
+int shTelemetryTest();
 
 int main() {
 	printResult("Pipe", pipeTest);
 	printResult("Camera", cameraTest);
 	printResult("MultiPhoto", multiphotoCameraTest);
+	printResult("Shared telemetry", shTelemetryTest);
+}
+
+int shTelemetryTest() {
+	if ( !shTelemetry_create() ) {
+		return 0;
+	}
+
+	shTelemetry shtel;
+	if ( !shtel.connect() ) {
+		return 0;
+	}
+
+	for (int i=0 ; i < 2; i++) {
+		printf("Writing entry %d\n", i+1);
+
+		int type = i+1;
+		int buffSize = 100;
+		char buff1[buffSize];
+		char buff2[buffSize];
+
+		if ( !shtel.add(type, buff1, buffSize)
+		  || !shtel.get(type, buff2) ) {
+			return 0;
+		}
+
+		if ( memcmp(buff1, buff2, buffSize) != 0 ) {
+			printf("Incorrect entry in the memory\n");
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 camera Camera;
 
 int multiphotoCameraTest() {
 	//capture
+
+	if ( !Camera.isOpened() ) {
+		printf("camera isn't opened\n");
+		return 0;
+	}
 
 	int photoCount = 100;
 
