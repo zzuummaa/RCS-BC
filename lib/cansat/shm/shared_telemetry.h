@@ -10,6 +10,7 @@
 
 #include "shared_memory.h"
 #include "ipcmutex.h"
+#include "parser.h"
 
 #define DEFAULT_MUTEX_NAME		"/tel_mutex"
 #define DEFAULT_SH_MEM_NAME		"tel_sh_memory"
@@ -32,18 +33,17 @@ class shTelemetry {
 private:
 	sharedMemory* shm;
 	IPCMutex* mutex;
-	title* searchTitle(int type);
-	int getSize();
-	int setSize(int size);
-	char* getMem();
+	mapParser* mparser;
 public:
 	shTelemetry() {
 		shm = new sharedMemory(DEFAULT_SH_MEM_NAME, DEFAULT_MEM_SIZE);
 		mutex = new IPCMutex(DEFAULT_MUTEX_NAME);
+		mparser = NULL;
 	}
 	~shTelemetry() {
 		delete shm;
 		delete mutex;
+		delete mparser;
 	}
 	int connect();
 	int disconnect();
@@ -62,7 +62,7 @@ public:
 	 * return size of wrote data
 	 * 		  0 if error
 	 */
-	int get(char* buff, int buff_size);
+	int getAll(char* buff, int buff_size);
 	int add(int type, telData_t, int size);
 	//int update(int type, telData_t data);
 };

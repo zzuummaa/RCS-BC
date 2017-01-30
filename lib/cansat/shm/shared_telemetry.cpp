@@ -28,6 +28,7 @@ typedef struct {
 
 int shTelemetry::connect() {
 	if ( mutex->open() && shm->open() ) {
+		mparser = new mapParser(shm->getMem(), shm->size);
 		return 1;
 	} else {
 		return 0;
@@ -36,58 +37,11 @@ int shTelemetry::connect() {
 
 int shTelemetry::disconnect() {
 	if ( mutex->close() && shm->close_() ) {
+		delete mparser;
 		return 1;
 	} else {
 		return 0;
 	}
-}
-
-char* shTelemetry::getMem() {
-	return shm->getMem() + sizeof(shTelInfo);
-}
-
-int shTelemetry::getSize() {
-	char* memp = shm->getMem();
-	if (memp == NULL) {
-		return 0;
-	}
-
-	shTelInfo* sh = (shTelInfo*)memp;
-	return sh->size;
-}
-
-int shTelemetry::setSize(int size) {
-	char* memp = shm->getMem();
-	if (memp == NULL) {
-		return 0;
-	}
-
-	shTelInfo* sh = (shTelInfo*)memp;
-	sh->size = size;
-	return 1;
-}
-
-/**
- * It Finds data with input type
- * return pointer to desired title
- * 	  or  NULL if error occurred
- * 	  or  title with type=0 if not found
- */
-title* shTelemetry::searchTitle(int type) {
-	char* memp = getMem();
-	if (memp == NULL) {
-		return NULL;
-	}
-
-	title* tit = (title*) memp;
-	while (tit->type != 0) {
-		if (tit->type == type) {
-			break;
-		}
-		tit += tit->size + sizeof(title);
-	}
-
-	return tit;
 }
 
 int shTelemetry::get(int type, telData_t data) {
@@ -96,15 +50,12 @@ int shTelemetry::get(int type, telData_t data) {
 	if ( !mutex->lock() ) return 0;
 
 	try {
-		title* tit = searchTitle(type);
-		if (tit == NULL) {
-			throw(1);
-		}
-		if (tit->type == 0) {
-			throw(2);
-		}
+		char* buffP;
 
-		memcpy(data, (char*)tit + sizeof(title), tit->size);
+		int count = mparser->get(type, &buffP);
+		if ( count == -1) throw(2);
+
+		memcpy(data, buffP, count);
 	} catch(int e) {
 		printf("Error caught: ");
 		switch (e) {
@@ -119,24 +70,14 @@ int shTelemetry::get(int type, telData_t data) {
 	return res;
 }
 
-int shTelemetry::get(char* buff, int buff_size) {
+int shTelemetry::getAll(char* buff, int buff_size) {
 	int size = 0;
 
 	if ( !mutex->lock() ) return 0;
 
 	try {
-		size = getSize() - sizeof(title) - sizeof(shTelInfo);
-		char* memp = getMem();
-
-		if (memp == NULL) {
-			throw(5);
-		}
-
-		if (size > buff_size) {
-			throw(6);
-		}
-
-		memcpy(buff, memp, size);
+		size = mparser->cpyBuff(buff, buff_size);
+		if (size < 0) throw(5);
 	} catch(int e) {
 		printf("Error caught: ");
 		switch (e) {
@@ -157,42 +98,13 @@ int shTelemetry::add(int type, telData_t data, int size) {
 	if ( !mutex->lock() ) return 0;
 
 	try {
-		//We are remember that search title return last
-		//title if not found desired title or
-		title* tit = searchTitle(type);
-		if (tit == NULL) {
+		if ( mparser->add(type, data, size) != 1 ) {
 			throw(1);
 		}
-
-		if (tit->type == type) {
-			if (tit->size != size) {
-				throw(4);
-			}
-		}
-
-		if (tit->type == 0) {
-			int requiredMem = getSize() + sizeof(title) + size;
-			if (requiredMem > shm->size) {
-				throw(3);
-			}
-
-			title* newLastTitle = (title*) ( (char*)tit + sizeof(title) + size );
-			newLastTitle->size = 0;
-			newLastTitle->type = 0;
-
-			tit->type = type;
-			tit->size = size;
-
-			setSize(requiredMem);
-		}
-
-		memcpy((char*)tit + sizeof(title), data, size);
 	} catch (int e) {
 		printf("Error caught: ");
 		switch (e) {
-		case 1: printf("Search title error\n"); break;
-		case 3: printf("Out of shared memory error\n"); break;
-		case 4: printf("Not equals data size error\n"); break;
+		case 1: printf("Parse data error\n");
 		}
 		res = 0;
 	}
@@ -208,11 +120,9 @@ int shTelemetry_create() {
 		return 0;
 	}
 
-	char* memp = shm.getMem();
-	memset(memp, '\0', shm.size);
-
-	shTelInfo* telinfo = (shTelInfo*)memp;
-	telinfo->size = sizeof(shTelInfo) + sizeof(title);
+	if ( !markMem(shm.getMem(), shm.size) ) {
+		return 0;
+	}
 
 	if ( !shm.close_() ) {
 		return 0;
