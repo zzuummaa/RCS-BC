@@ -10,27 +10,46 @@
 
 #include <stddef.h>
 
-class sharedMemory {
+class memory {
 public:
 	char* memName;
-	int shm, size;
-	char *mem;
+	int desc, size;
+	char* mem;
 
-	sharedMemory(char* memName, const int size) {
-		this->memName = memName;
-		this->size = size;
-		this->shm = -1;
-		this->mem = NULL;
-	}
+	friend void initMem(memory* thism, char* memName, const int size);
+	friend void destroyMem(memory* thism);
+
+	char* getMem();
 
 	int create();
-	int open();
-	char* getMem();
+	int open_();
 	int close_();
-private:
+protected:
 	int mmap();
 };
 
+class sharedMemory : public memory {
+public:
+	sharedMemory(char* memName, const int size);
+	~sharedMemory();
+
+	int create();
+	int open_();
+	int close_();
+};
+
 int sharedMemory_remove(const char* memName);
+
+class fileMemory : public memory {
+private:
+	int allocMem();
+public:
+	fileMemory(char* memName, const int size);
+	~fileMemory();
+
+	int create();
+	int open_();
+	int close_();
+};
 
 #endif /* SHARED_MEMORY_H_ */

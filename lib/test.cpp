@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "cansat/camera.h"
-#include "cansat/shm/shared_telemetry.h"
+#include "cansat/shm/data_service.h"
 
 using namespace std;
 
@@ -59,7 +59,7 @@ int shTelemetryTest() {
 		return 0;
 	}
 
-	shTelemetry shtel;
+	dataService shtel;
 	if ( !shtel.connect() ) {
 		return 0;
 	}

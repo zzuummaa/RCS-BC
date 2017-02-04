@@ -16,18 +16,25 @@
  * "size" - size in bytes of all memory which are in use in current moment
  */
 
-#include "shared_telemetry.h"
 #include <stddef.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "data_service.h"
 
-typedef struct {
-	int size;
-} shTelInfo;
+dataService::dataService(char* serviceName, const int memSize, memType memtype) {
+	char tmp[100];
+	sprintf(tmp, "shm_%s", serviceName);
+	shm = new sharedMemory(tmp, memSize);
 
-int shTelemetry::connect() {
-	if ( mutex->open() && shm->open() ) {
+	sprintf(tmp, "/mut_%s", serviceName);
+	mutex = new IPCMutex(tmp);
+
+	mparser = NULL;
+}
+
+int dataService::connect() {
+	if ( mutex->open() && shm->open_() ) {
 		mparser = new mapParser(shm->getMem(), shm->size);
 		return 1;
 	} else {
@@ -35,16 +42,17 @@ int shTelemetry::connect() {
 	}
 }
 
-int shTelemetry::disconnect() {
+int dataService::disconnect() {
 	if ( mutex->close() && shm->close_() ) {
 		delete mparser;
+		mparser = NULL;
 		return 1;
 	} else {
 		return 0;
 	}
 }
 
-int shTelemetry::get(int type, telData_t data) {
+int dataService::get(int type, telData_t data) {
 	int res = 1;
 
 	if ( !mutex->lock() ) return 0;
@@ -70,7 +78,7 @@ int shTelemetry::get(int type, telData_t data) {
 	return res;
 }
 
-int shTelemetry::getAll(char* buff, int buff_size) {
+int dataService::getBuff(char* buff, int buff_size) {
 	int size = 0;
 
 	if ( !mutex->lock() ) return 0;
@@ -92,7 +100,7 @@ int shTelemetry::getAll(char* buff, int buff_size) {
 	return size;
 }
 
-int shTelemetry::add(int type, telData_t data, int size) {
+int dataService::add(int type, telData_t data, int size) {
 	int res = 1;
 
 	if ( !mutex->lock() ) return 0;

@@ -15,7 +15,7 @@
 #include "telemetry_pipe.h"
 #include "filewriter.h"
 #include "camera.h"
-#include "shm/shared_telemetry.h"
+#include "shm/data_service.h"
 
 #define IMG_PATH "img"
 
@@ -36,7 +36,7 @@ void formatted_filename(char* dst) {
 }
 
 int main() {
-	shTelemetry shtel;
+	dataService shtel;
 	shtel.connect();
 
 	filewriter fwriter;

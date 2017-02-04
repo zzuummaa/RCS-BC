@@ -9,9 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "data_service.h"
 #include "shared_memory.h"
 #include "ipcmutex.h"
-#include "shared_telemetry.h"
 
 #define SEMAPHORE_NAME "/my_named_semaphore"
 
@@ -43,7 +44,7 @@ int example_shared_telemetry(int argc, char ** argv) {
 		return 0;
 	}
 
-	shTelemetry shtel;
+	dataService shtel;
 	shtel.connect();
 
 	int type;;
@@ -145,7 +146,7 @@ int example_sharedMemory (int argc, char ** argv) {
 	sharedMemory shm(SHARED_MEMORY_OBJECT_NAME, SHARED_MEMORY_OBJECT_SIZE+1);
 
 	if (cmd == SHM_CREATE) shm.create();
-	if (cmd == SHM_PRINT ) shm.open();
+	if (cmd == SHM_PRINT ) shm.open_();
 	if (cmd == SHM_CLOSE ) {
 		sharedMemory_remove(SHARED_MEMORY_OBJECT_NAME);
 		return 0;

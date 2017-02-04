@@ -10,9 +10,29 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <fcntl.h>
+
+/**
+ * ===============================================
+ * =                  memory                     =
+ * ===============================================
+ */
+
+void initMem(memory* thism, char* memName, const int size) {
+	thism->memName = new char[strlen(memName)];
+	strcpy(thism->memName, memName);
+
+	thism->size = size;
+	thism->desc = -1;
+	thism->mem = NULL;
+}
+
+void destroyMem(memory* thism) {
+	delete[] thism->memName;
+}
 
 /**
  * Map addresses from shm - file descriptor.
@@ -31,8 +51,8 @@ char* mmap_mem(int shm, int size) {
 	return addr;
 }
 
-int sharedMemory::mmap() {
-	mem = mmap_mem(shm, size);
+int memory::mmap() {
+	mem = mmap_mem(desc, size);
 
 	if (mem == NULL) {
 		perror("mmap");
@@ -42,13 +62,31 @@ int sharedMemory::mmap() {
 	}
 }
 
+char* memory::getMem() {
+	return mem;
+}
+
+/**
+ * ===============================================
+ * =                sharedMemory                 =
+ * ===============================================
+ */
+
+sharedMemory::sharedMemory(char* memName, const int size) {
+	initMem(this, memName, size);
+}
+
+sharedMemory::~sharedMemory() {
+	destroyMem(this);
+}
+
 int sharedMemory::create() {
-	if ( (shm = shm_open(memName, O_CREAT|O_RDWR, 0777)) == -1 ) {
+	if ( (desc = shm_open(memName, O_CREAT|O_RDWR, 0777)) == -1 ) {
 		perror("shm_open");
 		return 0;
 	}
 
-	if ( ftruncate(shm, size) == -1 ) {
+	if ( ftruncate(desc, size) == -1 ) {
 		perror("ftruncate");
 		return 0;
 	}
@@ -56,17 +94,13 @@ int sharedMemory::create() {
 	return mmap();
 }
 
-int sharedMemory::open() {
-	if ( (shm = shm_open(memName, 0|O_RDWR, 0777)) == -1 ) {
+int sharedMemory::open_() {
+	if ( (desc = shm_open(memName, 0|O_RDWR, 0777)) == -1 ) {
 		perror("shm_open");
 		return 0;
 	}
 
 	return mmap();
-}
-
-char* sharedMemory::getMem() {
-	return mem;
 }
 
 int sharedMemory::close_() {
@@ -77,7 +111,7 @@ int sharedMemory::close_() {
 		status = 0;
 	}
 
-	if ( close(shm) == -1 ) {
+	if ( close(desc) == -1 ) {
 		perror("close");
 		status = 0;
 	}
@@ -92,4 +126,63 @@ int sharedMemory_remove(const char* memName) {
 	} else {
 		return 1;
 	}
+}
+
+/**
+ * ===============================================
+ * =                 fileMemory                  =
+ * ===============================================
+ */
+
+fileMemory::fileMemory(char* memName, const int size) {
+	initMem(this, memName, size);
+}
+
+fileMemory::~fileMemory() {
+	destroyMem(this);
+}
+
+int fileMemory::allocMem() {
+	char tmp[0xfffff];
+	memset(tmp, '\0', sizeof(tmp));
+
+	int status = 0, count = 0;
+	int size = this->size;
+	while (size > 0) {
+		if (size / sizeof(tmp) > 0) {
+			count = sizeof(tmp);
+		} else {
+			count = size % sizeof(tmp);
+		}
+
+		status = write(desc, tmp, count);
+		if (status != count) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+int fileMemory::create() {
+	if ( (desc = open(memName, O_WRONLY)) == -1) {
+		perror("fileMemory_open");
+		return 0;
+	}
+
+	/*if ( !allocMem() ) {
+		perror("fileMemory_allocMem");
+		return 0;
+	}
+
+	if ( close(desc) == 0 ) {
+		perror("fileMemory_close");
+		return 0;
+	}*/
+
+	return 1;
+}
+
+int fileMemory::open_() {
+
 }
