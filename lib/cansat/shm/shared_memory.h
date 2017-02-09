@@ -26,6 +26,7 @@ public:
 	char* getMem();
 
 	int create();
+	virtual int remove();
 	int open_();
 	int close_();
 protected:
@@ -38,6 +39,7 @@ protected:
 class sharedMemory : public memory {
 public:
 	sharedMemory(char* memName, const int size);
+	int remove();
 protected:
 	int openToCreate();
 	int openToRW();
@@ -50,6 +52,7 @@ private:
 	int allocMem();
 public:
 	fileMemory(char* memName, const int size);
+	int remove();
 protected:
 	int openToCreate();
 	int openToRW();

@@ -124,12 +124,12 @@ valTitle* searchTitle(valTitle* firstTitle, int key) {
 	return title;
 }
 
-int mapParser::add(int key, const char* val, const int size) {
+int mapParser::add(int key, const void* val, const int size) {
 	assert(key >= 0);
 
 	valTitle* title = searchTitle(firstTitle, key);
 
-	return addVal(title, key, val, size);
+	return addVal(title, key, (char*)val, size);
 }
 
 /**

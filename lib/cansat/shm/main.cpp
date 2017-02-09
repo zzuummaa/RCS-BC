@@ -1,14 +1,16 @@
 //============================================================================
-// Name        : shared_memory.cpp
+// Name        : main.cpp
 // Author      : 
 // Version     :
 // Copyright   : Your copyright notice
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-#include <stdio.h>
+/*#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <time.h>
 
 #include "data_service.h"
 #include "shared_memory.h"
@@ -24,79 +26,124 @@
 
 int example_mutex(int argc, char ** argv);
 int example_sharedMemory (int argc, char ** argv);
-int example_shared_telemetry(int argc, char ** argv);
+int example_data_services(int argc, char ** argv);
 
-/*int main(int argc, char ** argv) {
-	return example_shared_telemetry(argc, argv);
-}*/
+int main(int argc, char ** argv) {
+	return example_data_services(argc, argv);
+}
 
-int example_shared_telemetry(int argc, char ** argv) {
+int example_data_services(int argc, char ** argv) {
 
-	if (argc < 2) {
-		printf("Usage: %s <create|write|read> [other params]\n", argv[0]);
+	if (argc < 3) {
+		printf("Usage: %s <f|s|d> <create|write|read|remove> [other params]\n", argv[0]);
 		return 0;
 	}
 
-	if (!strcmp(argv[1], "create")) {
-		if ( shTelemetry_create() ) {
-			printf("Shared telemetry created!\n");
+	memType memtype;
+	if (!strcmp(argv[1], "f"  )) memtype = MEM_FILE;
+	if (!strcmp(argv[1], "s")) memtype = MEM_SHARED;
+
+	dataService* shtel;
+
+	if (!strcmp(argv[1], "d")) {
+		shtel = new DBMDataService();
+	} else {
+		shtel = new IPCDataService(memtype);
+	}
+
+	if (!strcmp(argv[2], "remove")) {
+		if ( shtel->remove() ) {
+			printf("Remove success\n");
+			return 0;
+		} else {
+			printf("Remove failure\n");
+			return 1;
 		}
-		return 0;
 	}
 
-	dataService shtel;
-	shtel.connect();
+	if (!strcmp(argv[2], "create")) {
+		if ( shtel->create() ) {
+			printf("Shared memory created\n");
+		}
+	} else {
+		if ( !shtel->connect() ) {
+			return 1;
+		}
+	}
 
 	int type;;
 	char* data;
 	int status;
 
-	if (!strcmp(argv[1], "write")) {
-		type = atoi(argv[2]);
-		data = argv[3];
+	if (!strcmp(argv[2], "write")) {
+		assert(argc > 4);
+		type = atoi(argv[3]);
+		data = argv[4];
 		printf("type=%d data=%s\n", type, data);
 
-		status = shtel.add(type, data, strlen(data)+1);
+		status = shtel->add(type, data, strlen(data)+1);
 		if (status == 1) {
 			printf("Write data success\n");
+		} else {
+			printf("Write data failure\n");
 		}
 	}
 
-	if (!strcmp(argv[1], "read")) {
-		type = atoi(argv[2]);
+	if (!strcmp(argv[2], "read")) {
+		assert(argc > 3);
+		type = atoi(argv[3]);
 		printf("type=%d\n", type);
 
 		char buff[200];
-		status = shtel.get(type, buff);
+		status = shtel->get(type, buff);
 		if (status == 1) {
 			printf("Read data success: %s\n", buff);
+		} else {
+			printf("Read data failure\n");
 		}
 	}
 
-	char* words[] = {"fuck", "suck", "duck"};
+	int memlen = 200;
+	char* words[] = {new char[memlen], new char[memlen], new char[memlen]};
+	int counter = 0;
+	time_t timer = time(0);
+	int inc = 0;
 
-	if (!strcmp(argv[1], "trashwrite")) {
-		type = atoi(argv[2]);
+	if (!strcmp(argv[2], "trashwrite")) {
+		assert(argc > 4);
+		type = atoi(argv[3]);
+		inc = atoi(argv[4]);
 
 		int i = 0;
 		while(1) {
-			int status = shtel.add(type, words[i], strlen(words[i])+1 );
+			int status = shtel->add(type, words[i], memlen );
 			if (status == 0) {
 				break;
 			}
 			i = (i+1) % 3;
+			type += inc;
+
+			counter++;
+			if (difftime(time(0), timer) >= 1) {
+				printf("Write %d records, %d bytes\n", counter, counter * memlen);
+				counter = 0;
+				timer = time(0);
+			}
 		}
 	}
 
-	if (!strcmp(argv[1], "trashread")) {
-		type = atoi(argv[2]);
+	if (!strcmp(argv[2], "trashread")) {
+		assert(argc > 4);
+		type = atoi(argv[3]);
+		inc = atoi(argv[4]);
 
 		while(1) {
-			char buff[200];
-			int status = shtel.get(type, buff);
+			char buff[memlen];
+			int status = shtel->get(type, buff);
 			if (status == 0) {
 				break;
 			}
+			type += inc;
 
 			status = 0;
 			for (int i=0; i < 3; i++) {
@@ -106,13 +153,25 @@ int example_shared_telemetry(int argc, char ** argv) {
 				}
 			}
 			if (status == 0) {
-				printf("Datas isn't euqals\n");
+				printf("Data %d isn't euqals\n", type);
 				break;
+			}
+
+			counter++;
+			if (difftime(time(0), timer) >= 1) {
+				printf("Read %d data\n");
+				timer = time(0);
+				counter = 0;
 			}
 		}
 	}
 
-	shtel.disconnect();
+	shtel->disconnect();
+	for (int i = 0; i < 3; i++) {
+		delete[] words[i];
+	}
+
+	delete shtel;
 
 	return 0;
 }
@@ -180,7 +239,6 @@ int example_mutex(int argc, char ** argv) {
 		}
 		printf("Mutex created\n");
 
-		char tmp[100];
 		scanf("/n");
 
 		mut.close();
@@ -195,7 +253,6 @@ int example_mutex(int argc, char ** argv) {
 		mut.lock();
 		printf("Mutex locked\n");
 
-		char tmp[100];
 		scanf("/n");
 
 		mut.unlock();
@@ -203,4 +260,4 @@ int example_mutex(int argc, char ** argv) {
 	}
 
 	return 0;
-}
+}*/

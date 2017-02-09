@@ -14,7 +14,19 @@
 using namespace std;
 
 /**
+ * Description:
+ *
+ * Memory organization ( I suppose:) )
+ *
+ * [memoryTitle][valTitle 1][  data1  ][valTitle 2][  data2   ]..[valTitle {lastTitNum}]
+ *
+ * In title with number "lastTitNum", field "type" is equals END_KEY (type=END_KEY).
+ */
+
+/**
  * Title of data,contained in buff
+ *
+ * "size" - size in bytes of all memory which are in use in current moment
  */
 typedef struct {
 	int key;
@@ -38,6 +50,8 @@ protected:
 public:
 	friend void initParser(parser* thism, char* buff, int capacity);
 
+	virtual ~parser() {};
+
 	/**
 	 * return size of data, contained in buff
 	 *     or -1 if error occurred
@@ -49,7 +63,12 @@ public:
 	void setBuffPoint(char* buff);
 	char* getBuffPoint();
 	int cpyBuff(char* buff, int buff_size);
+
+	virtual int add(const int key, const void* val, const int size) {return 0;};
+	virtual int get(const int key, const void* val) {return 0;}
 };
+
+typedef int (*callbackFun)(int, void*);
 
 class mapParser : public parser {
 protected:
@@ -57,19 +76,21 @@ public:
 	mapParser();
 	mapParser(char* buff, int capacity);
 
-	int add(int key, const char* val, const int size);
-	int get(int key, char** val);
+	int add(const int key, const void* val, const int size);
+	int get(const int key, char** val);
 	int getKeyMap(map<int, char*>* m);
 };
 
 class multiMapParser : public parser {
 protected:
-	multiMapParser() {};
 public:
+	multiMapParser() {};
 	multiMapParser(char* buff, int capacity);
 
 	int add(const int key, const char* val, const int valSize);
 	int get(int key, vector<char*>* val);
+
+	void setCallback(callbackFun callback){};
 };
 
 class timeParser : public mapParser {

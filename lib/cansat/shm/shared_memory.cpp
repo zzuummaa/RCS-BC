@@ -46,6 +46,14 @@ int memory::create() {
 	return mmap();
 }
 
+int memory::remove() {
+	if ( unlink(this->memName) == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 int memory::open_() {
 	if ( !openToRW() ) {
 		return 0;
@@ -148,6 +156,14 @@ int sharedMemory_remove(const char* memName) {
 	}
 }
 
+int sharedMemory::remove() {
+	if ( shm_unlink(memName) == -1 ) {
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
 /**
  * ===============================================
  * =                 fileMemory                  =
@@ -192,6 +208,14 @@ int fileMemory::openToCreate() {
 int fileMemory::openToRW() {
 	if ( (desc = open(memName, O_RDWR)) == -1) {
 		perror("fileMemory_open");
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
+int fileMemory::remove() {
+	if ( unlink(memName) == -1) {
 		return 0;
 	} else {
 		return 1;

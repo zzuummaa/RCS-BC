@@ -5,26 +5,67 @@
  *      Author: zzuummaa
  */
 
-/**
- * Description:
- *
- * Shared memory organization ( I suppose:) )
- *
- * [size][title 1][  data2  ][title 2][  data2   ]..[title {lastTitNum}]
- *
- * In title with number "lastTitNum", field "type" is equals zero (type=0).
- * "size" - size in bytes of all memory which are in use in current moment
- */
-
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "data_service.h"
 
-void initDataService(dataService* thism, char* serviceName, const int memSize, memType memtype) {
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdarg.h>
+#include <string.h>
+#include <assert.h>
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+
+
+/**
+ * ===============================================
+ * =            DBMDataService                   =
+ * ===============================================
+ */
+
+#ifdef _GDBM_H_
+
+DBMDataService::DBMDataService() {
+	initDataBase(this, DEFAULT_D_BASE_NAME);
+}
+
+DBMDataService::DBMDataService(char* serviceName) {
+	initDataBase(this, serviceName);
+}
+
+int DBMDataService::create() {
+	return dataBase::create();
+}
+
+int DBMDataService::remove() {
+	return dataBase::remove();
+}
+
+int DBMDataService::connect() {
+	return dataBase::connect();
+}
+
+int DBMDataService::disconnect() {
+	return dataBase::disconnect();
+}
+
+int DBMDataService::get(int key, char* data) {
+	return dataBase::get((char*)&key, sizeof(key), data);
+}
+
+int DBMDataService::add(int key, char* data, int size) {
+	return dataBase::add((char*)&key, sizeof(key), data, size);
+}
+
+#endif
+
+/**
+ * ===============================================
+ * =            IPCDataService                   =
+ * ===============================================
+ */
+
+void initIPCDataService(IPCDataService* thism, char* serviceName, const int memSize, memType memtype) {
 	char tmp[100];
 	sprintf(tmp, "shm_%s", serviceName);
 
@@ -40,19 +81,19 @@ void initDataService(dataService* thism, char* serviceName, const int memSize, m
 	thism->mparser = new mapParser();
 }
 
-dataService::dataService(memType memtype) {
-	initDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, memtype);
+IPCDataService::IPCDataService(memType memtype) {
+	initIPCDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, memtype);
 }
 
-dataService::dataService() {
-	initDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, MEM_SHARED);
+IPCDataService::IPCDataService() {
+	initIPCDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, MEM_SHARED);
 }
 
-dataService::dataService(char* serviceName, const int memSize, memType memtype) {
-	initDataService(this, serviceName, memSize, memtype);
+IPCDataService::IPCDataService(char* serviceName, const int memSize, memType memtype) {
+	initIPCDataService(this, serviceName, memSize, memtype);
 }
 
-dataService::~dataService() {
+IPCDataService::~IPCDataService() {
 	delete shm;
 	delete mutex;
 	delete mparser;
@@ -61,7 +102,7 @@ dataService::~dataService() {
 /**
  * Create new service with "serviceName" name.
  */
-int dataService::create() {
+int IPCDataService::create() {
 	if ( !mutex->create() || !shm->create() ) {
 		return 0;
 	}
@@ -77,7 +118,15 @@ int dataService::create() {
 	return 1;
 }
 
-int dataService::connect() {
+int IPCDataService::remove() {
+	if (mutex->remove() && shm->remove()) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int IPCDataService::connect() {
 	if ( mutex->open() && shm->open_() ) {
 		mparser->setBuffPoint( shm->getMem() );
 		mparser->setCapacity(  shm->size );
@@ -87,7 +136,7 @@ int dataService::connect() {
 	}
 }
 
-int dataService::disconnect() {
+int IPCDataService::disconnect() {
 	if ( mutex->close() && shm->close_() ) {
 		return 1;
 	} else {
@@ -95,16 +144,16 @@ int dataService::disconnect() {
 	}
 }
 
-mapParser* dataService::getParser() {
+parser* IPCDataService::getParser() {
 	return mparser;
 }
 
-void dataService::setParser(mapParser* parser) {
+void IPCDataService::setParser(parser* parser) {
 	delete mparser;
 	this->mparser = parser;
 }
 
-int dataService::get(int type, telData_t data) {
+int IPCDataService::get(int type, char* data) {
 	int res = 1;
 
 	if ( !mutex->lock() ) return 0;
@@ -130,7 +179,7 @@ int dataService::get(int type, telData_t data) {
 	return res;
 }
 
-int dataService::getBuff(char* buff, int buff_size) {
+int IPCDataService::getBuff(char* buff, int buff_size) {
 	int size = 0;
 
 	if ( !mutex->lock() ) return 0;
@@ -152,7 +201,7 @@ int dataService::getBuff(char* buff, int buff_size) {
 	return size;
 }
 
-int dataService::add(int type, telData_t data, int size) {
+int IPCDataService::add(int type, char* data, int size) {
 	int res = 1;
 
 	if ( !mutex->lock() ) return 0;
@@ -175,7 +224,7 @@ int dataService::add(int type, telData_t data, int size) {
 }
 
 int shTelemetry_create() {
-	dataService shtel;
+	IPCDataService shtel;
 
 	if ( !shtel.create() ) {
 		return 0;
