@@ -15,10 +15,8 @@ class IPCMutex {
 public:
 	char* semName;
 	sem_t *sem;
-	IPCMutex(char* semName) {
-		this->semName = semName;
-		sem = NULL;
-	}
+	IPCMutex(char* semName);
+	~IPCMutex();
 	int create();
 	int open();
 	int close();

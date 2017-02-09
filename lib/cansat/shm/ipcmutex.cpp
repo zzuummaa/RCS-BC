@@ -11,6 +11,17 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
+
+IPCMutex::IPCMutex(char* semName) {
+	this->semName = new char[strlen(semName)];
+	strcpy(this->semName, semName);
+	sem = NULL;
+}
+
+IPCMutex::~IPCMutex() {
+	delete[] this->semName;
+}
 
 int IPCMutex::create() {
 	if ( (sem = sem_open(semName, O_CREAT, 0644, 0)) == SEM_FAILED ) {

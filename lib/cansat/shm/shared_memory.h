@@ -19,6 +19,10 @@ public:
 	friend void initMem(memory* thism, char* memName, const int size);
 	friend void destroyMem(memory* thism);
 
+	virtual ~memory() {
+		destroyMem(this);
+	}
+
 	char* getMem();
 
 	int create();
@@ -26,16 +30,17 @@ public:
 	int close_();
 protected:
 	int mmap();
+	int fruncate();
+	virtual int openToCreate() { return 0;};
+	virtual int openToRW() { return 0; };
 };
 
 class sharedMemory : public memory {
 public:
 	sharedMemory(char* memName, const int size);
-	~sharedMemory();
-
-	int create();
-	int open_();
-	int close_();
+protected:
+	int openToCreate();
+	int openToRW();
 };
 
 int sharedMemory_remove(const char* memName);
@@ -45,11 +50,9 @@ private:
 	int allocMem();
 public:
 	fileMemory(char* memName, const int size);
-	~fileMemory();
-
-	int create();
-	int open_();
-	int close_();
+protected:
+	int openToCreate();
+	int openToRW();
 };
 
 #endif /* SHARED_MEMORY_H_ */

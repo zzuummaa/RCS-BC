@@ -34,6 +34,26 @@ void destroyMem(memory* thism) {
 	delete[] thism->memName;
 }
 
+int memory::create() {
+	if ( !openToCreate() ) {
+		return 0;
+	}
+
+	if ( !fruncate() ) {
+		return 0;
+	}
+
+	return mmap();
+}
+
+int memory::open_() {
+	if ( !openToRW() ) {
+		return 0;
+	}
+
+	return mmap();
+}
+
 /**
  * Map addresses from shm - file descriptor.
  *
@@ -62,48 +82,20 @@ int memory::mmap() {
 	}
 }
 
+int memory::fruncate() {
+	if ( ftruncate(desc, size) == -1 ) {
+		perror("ftruncate");
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
 char* memory::getMem() {
 	return mem;
 }
 
-/**
- * ===============================================
- * =                sharedMemory                 =
- * ===============================================
- */
-
-sharedMemory::sharedMemory(char* memName, const int size) {
-	initMem(this, memName, size);
-}
-
-sharedMemory::~sharedMemory() {
-	destroyMem(this);
-}
-
-int sharedMemory::create() {
-	if ( (desc = shm_open(memName, O_CREAT|O_RDWR, 0777)) == -1 ) {
-		perror("shm_open");
-		return 0;
-	}
-
-	if ( ftruncate(desc, size) == -1 ) {
-		perror("ftruncate");
-		return 0;
-	}
-
-	return mmap();
-}
-
-int sharedMemory::open_() {
-	if ( (desc = shm_open(memName, 0|O_RDWR, 0777)) == -1 ) {
-		perror("shm_open");
-		return 0;
-	}
-
-	return mmap();
-}
-
-int sharedMemory::close_() {
+int memory::close_() {
 	int status = 1;
 
 	if ( munmap(mem, size) == -1 ) {
@@ -117,6 +109,34 @@ int sharedMemory::close_() {
 	}
 
 	return status;;
+}
+
+/**
+ * ===============================================
+ * =                sharedMemory                 =
+ * ===============================================
+ */
+
+sharedMemory::sharedMemory(char* memName, const int size) {
+	initMem(this, memName, size);
+}
+
+int sharedMemory::openToRW() {
+	if ( (desc = shm_open(memName, 0|O_RDWR, 0777)) == -1 ) {
+		perror("shm_open");
+		return 0;
+	} else {
+		return 1;
+	}
+}
+
+int sharedMemory::openToCreate() {
+	if ( (desc = shm_open(memName, O_CREAT|O_RDWR, 0777)) == -1 ) {
+		perror("shm_open");
+		return 0;
+	} else {
+		return 1;
+	}
 }
 
 int sharedMemory_remove(const char* memName) {
@@ -136,10 +156,6 @@ int sharedMemory_remove(const char* memName) {
 
 fileMemory::fileMemory(char* memName, const int size) {
 	initMem(this, memName, size);
-}
-
-fileMemory::~fileMemory() {
-	destroyMem(this);
 }
 
 int fileMemory::allocMem() {
@@ -164,25 +180,20 @@ int fileMemory::allocMem() {
 	return 1;
 }
 
-int fileMemory::create() {
-	if ( (desc = open(memName, O_WRONLY)) == -1) {
+int fileMemory::openToCreate() {
+	if ( (desc = open(memName, O_CREAT|O_RDWR, 0777)) == -1) {
 		perror("fileMemory_open");
 		return 0;
+	} else {
+		return 1;
 	}
-
-	/*if ( !allocMem() ) {
-		perror("fileMemory_allocMem");
-		return 0;
-	}
-
-	if ( close(desc) == 0 ) {
-		perror("fileMemory_close");
-		return 0;
-	}*/
-
-	return 1;
 }
 
-int fileMemory::open_() {
-
+int fileMemory::openToRW() {
+	if ( (desc = open(memName, O_RDWR)) == -1) {
+		perror("fileMemory_open");
+		return 0;
+	} else {
+		return 1;
+	}
 }

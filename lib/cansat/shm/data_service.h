@@ -12,13 +12,14 @@
 #include "ipcmutex.h"
 #include "parser.h"
 
+#define DEFAULT_D_SERV_NAME		"dataService"
 #define DEFAULT_MUTEX_NAME		"/tel_mutex"
 #define DEFAULT_SH_MEM_NAME		"tel_sh_memory"
-#define DEFAULT_MEM_SIZE		1000
+#define DEFAULT_MEM_SIZE		1000000
 
 enum memType {
-	ERAM,
-	SHM
+	MEM_FILE,
+	MEM_SHARED
 };
 
 /**
@@ -28,23 +29,22 @@ typedef char* telData_t;
 
 class dataService {
 private:
-	sharedMemory* shm;
+	memory* shm;
 	IPCMutex* mutex;
 	mapParser* mparser;
 public:
-	dataService() {
-		shm = new sharedMemory(DEFAULT_SH_MEM_NAME, DEFAULT_MEM_SIZE);
-		mutex = new IPCMutex(DEFAULT_MUTEX_NAME);
-		mparser = NULL;
-	}
+	friend void initDataService(dataService* thism, char* serviceName, const int memSize, memType memtype);
+
+	dataService();
+	dataService(memType memtype);
 	dataService(char* serviceName, const int memSize, memType memtype);
-	~dataService() {
-		delete shm;
-		delete mutex;
-		delete mparser;
-	}
+	~dataService();
+	int create();
 	int connect();
 	int disconnect();
+
+	mapParser* getParser();
+	void setParser(mapParser* parser);
 
 	/**
 	 * write telemetry data with input type

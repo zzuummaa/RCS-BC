@@ -20,22 +20,67 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+
 #include "data_service.h"
 
-dataService::dataService(char* serviceName, const int memSize, memType memtype) {
+void initDataService(dataService* thism, char* serviceName, const int memSize, memType memtype) {
 	char tmp[100];
 	sprintf(tmp, "shm_%s", serviceName);
-	shm = new sharedMemory(tmp, memSize);
+
+	switch (memtype) {
+	case MEM_FILE   : thism->shm = new fileMemory(tmp, memSize); break;
+	case MEM_SHARED : thism->shm = new sharedMemory(tmp, memSize); break;
+	defualt         : assert(memtype != MEM_FILE && memtype != MEM_SHARED);
+	}
 
 	sprintf(tmp, "/mut_%s", serviceName);
-	mutex = new IPCMutex(tmp);
+	thism->mutex = new IPCMutex(tmp);
 
-	mparser = NULL;
+	thism->mparser = new mapParser();
+}
+
+dataService::dataService(memType memtype) {
+	initDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, memtype);
+}
+
+dataService::dataService() {
+	initDataService(this, DEFAULT_D_SERV_NAME, DEFAULT_MEM_SIZE, MEM_SHARED);
+}
+
+dataService::dataService(char* serviceName, const int memSize, memType memtype) {
+	initDataService(this, serviceName, memSize, memtype);
+}
+
+dataService::~dataService() {
+	delete shm;
+	delete mutex;
+	delete mparser;
+}
+
+/**
+ * Create new service with "serviceName" name.
+ */
+int dataService::create() {
+	if ( !mutex->create() || !shm->create() ) {
+		return 0;
+	}
+
+	if ( !markMem(shm->getMem(), shm->size) ) {
+		perror("dataService_markMem");
+		return 0;
+	}
+
+	mparser->setBuffPoint( shm->getMem() );
+	mparser->setCapacity(  shm->size );
+
+	return 1;
 }
 
 int dataService::connect() {
 	if ( mutex->open() && shm->open_() ) {
-		mparser = new mapParser(shm->getMem(), shm->size);
+		mparser->setBuffPoint( shm->getMem() );
+		mparser->setCapacity(  shm->size );
 		return 1;
 	} else {
 		return 0;
@@ -44,12 +89,19 @@ int dataService::connect() {
 
 int dataService::disconnect() {
 	if ( mutex->close() && shm->close_() ) {
-		delete mparser;
-		mparser = NULL;
 		return 1;
 	} else {
 		return 0;
 	}
+}
+
+mapParser* dataService::getParser() {
+	return mparser;
+}
+
+void dataService::setParser(mapParser* parser) {
+	delete mparser;
+	this->mparser = parser;
 }
 
 int dataService::get(int type, telData_t data) {
@@ -123,26 +175,13 @@ int dataService::add(int type, telData_t data, int size) {
 }
 
 int shTelemetry_create() {
-	sharedMemory shm(DEFAULT_SH_MEM_NAME, DEFAULT_MEM_SIZE);
-	if ( !shm.create() ) {
+	dataService shtel;
+
+	if ( !shtel.create() ) {
 		return 0;
 	}
 
-	if ( !markMem(shm.getMem(), shm.size) ) {
-		return 0;
-	}
-
-	if ( !shm.close_() ) {
-		return 0;
-	}
-
-	IPCMutex mutex(DEFAULT_MUTEX_NAME);
-	if ( !mutex.create() ) {
-		return 0;
-	}
-	if ( !mutex.close() ) {
-		return 0;
-	}
+	shtel.disconnect();
 
 	return 1;
 }
