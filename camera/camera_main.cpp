@@ -36,7 +36,7 @@ void formatted_filename(char* dst) {
 }
 
 int main() {
-	dataService shtel;
+	IPCDataService shtel;
 	shtel.connect();
 
 	filewriter fwriter;

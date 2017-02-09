@@ -36,7 +36,7 @@ int IPCMutex::create() {
 
 int IPCMutex::open() {
 	if ( (sem = sem_open(semName, 0, 0644, 0)) == SEM_FAILED ) {
-		perror("sem_open");
+		//perror("sem_open");
 		sem_unlink(semName);
 		return 0;
 	}

@@ -39,7 +39,7 @@ dataBase::~dataBase() {
 }
 
 int dataBase::create() {
-	dbmf = gdbm_open(dbName, DEFAULT_BLOCK_SIZE, GDBM_NEWDB | GDBM_NOLOCK | GDBM_SYNC, 0777, NULL);
+	dbmf = gdbm_open(dbName, DEFAULT_BLOCK_SIZE, GDBM_WRCREAT | GDBM_NOLOCK | GDBM_SYNC, 0777, NULL);
 
 	if (dbmf == NULL) {
 		perror("gdbm_create");

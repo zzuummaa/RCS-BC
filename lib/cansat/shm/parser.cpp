@@ -36,7 +36,7 @@ char* parser::getBuffPoint() {
 
 int parser::cpyBuff(char* buff, int buff_size) {
 	int size = getBuffSize();
-	assert(buff_size < size);
+	assert(buff_size >= size);
 
 	memcpy(buff, getBuffPoint(), size);
 
@@ -58,6 +58,11 @@ void parser::setCapacity(int capacity) {
 void fillingLastTitle(valTitle* title) {
 	title->key  = END_KEY;
 	title->size =  0;
+}
+
+void parser::clear() {
+	fillingLastTitle(firstTitle);
+	setBuffSize(sizeof(memoryTitle) + sizeof(valTitle));
 }
 
 int parser::addVal(valTitle* title, const int key, const char* val, const int size) {
@@ -136,7 +141,7 @@ int mapParser::add(int key, const void* val, const int size) {
  * return size of data
  *     or -1 if not found
  */
-int mapParser::get(int key, char** val) {
+int mapParser::get(int key, void* val) {
 	assert(key >= 0);
 
 	valTitle* title = searchTitle(firstTitle, key);
@@ -145,7 +150,9 @@ int mapParser::get(int key, char** val) {
 		return -1;
 	}
 
-	*val = getVal(title);
+	char* pdata = getVal(title);
+
+	memcpy(val, pdata, title->size);
 
 	return title->size;
 }

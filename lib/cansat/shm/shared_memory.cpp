@@ -130,8 +130,8 @@ sharedMemory::sharedMemory(char* memName, const int size) {
 }
 
 int sharedMemory::openToRW() {
-	if ( (desc = shm_open(memName, 0|O_RDWR, 0777)) == -1 ) {
-		perror("shm_open");
+	if ( (desc = shm_open(memName, O_RDWR, 0777)) == -1 ) {
+		//perror("shm_open");
 		return 0;
 	} else {
 		return 1;

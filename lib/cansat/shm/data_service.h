@@ -17,7 +17,7 @@
 #define DEFAULT_D_SERV_NAME		"dataService"
 #define DEFAULT_MUTEX_NAME		"/tel_mutex"
 #define DEFAULT_SH_MEM_NAME		"tel_sh_memory"
-#define DEFAULT_MEM_SIZE		1000000
+#define DEFAULT_MEM_SIZE		50000
 
 class dataService {
 public:
@@ -104,7 +104,7 @@ public:
 
 };
 
-enum memType {
+typedef enum memType {
 	MEM_FILE,
 	MEM_SHARED
 };
@@ -125,6 +125,8 @@ public:
 	int remove();
 	int connect();
 	int disconnect();
+
+	int clear();
 
 	parser* getParser();
 	void setParser(parser* parser);

@@ -64,8 +64,9 @@ public:
 	char* getBuffPoint();
 	int cpyBuff(char* buff, int buff_size);
 
-	virtual int add(const int key, const void* val, const int size) {return 0;};
-	virtual int get(const int key, const void* val) {return 0;}
+	void clear();
+	virtual int add(const int key, const void* val, const int size) {return -1;};
+	virtual int get(const int key, void* val) {return -1;}
 };
 
 typedef int (*callbackFun)(int, void*);
@@ -77,7 +78,7 @@ public:
 	mapParser(char* buff, int capacity);
 
 	int add(const int key, const void* val, const int size);
-	int get(const int key, char** val);
+	int get(const int key, void* val);
 	int getKeyMap(map<int, char*>* m);
 };
 

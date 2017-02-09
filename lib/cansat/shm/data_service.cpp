@@ -144,6 +144,18 @@ int IPCDataService::disconnect() {
 	}
 }
 
+int IPCDataService::clear() {
+	int res = 1;
+
+	if ( !mutex->lock() ) return 0;
+
+	mparser->clear();
+
+	if ( !mutex->unlock() ) return 0;
+
+	return res;
+}
+
 parser* IPCDataService::getParser() {
 	return mparser;
 }
@@ -161,10 +173,9 @@ int IPCDataService::get(int type, char* data) {
 	try {
 		char* buffP;
 
-		int count = mparser->get(type, &buffP);
+		int count = mparser->get(type, buffP);
 		if ( count == -1) throw(2);
 
-		memcpy(data, buffP, count);
 	} catch(int e) {
 		printf("Error caught: ");
 		switch (e) {

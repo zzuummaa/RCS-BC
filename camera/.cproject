@@ -87,6 +87,7 @@
 								</option>
 								<option id="gnu.cpp.link.option.libs.1709079172" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="raspicam"/>
+									<listOptionValue builtIn="false" value="gdbm"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="rt"/>
 								</option>

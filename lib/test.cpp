@@ -59,7 +59,7 @@ int shTelemetryTest() {
 		return 0;
 	}
 
-	dataService shtel;
+	IPCDataService shtel;
 	if ( !shtel.connect() ) {
 		return 0;
 	}
