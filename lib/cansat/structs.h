@@ -18,12 +18,17 @@
  */
 typedef enum {
 	TYPE_NOTHING = 0,
-	TYPE_CAMERA  = 2
+	TYPE_CAMERA  = 2,
+	TYPE_KK = 3
 } DATA_TYPE;
 
 typedef struct {
 	char last_img_name[30];
 } tel_camera;
+
+typedef struct {
+	int impulsPerSec;
+} tel_kk;
 
 /**
  * Pack of all system condition

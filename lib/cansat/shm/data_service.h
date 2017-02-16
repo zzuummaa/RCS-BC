@@ -100,7 +100,7 @@ public:
 	 * 		  0 if fail
 	 */
 	int get(int key, char* data);
-	int add(int key, char* data, int size);
+	int add(int type, char* data, int size);
 
 };
 

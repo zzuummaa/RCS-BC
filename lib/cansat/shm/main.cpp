@@ -12,9 +12,10 @@
 #include <assert.h>
 #include <time.h>
 
-#include "data_service.h"
-#include "shared_memory.h"
-#include "ipcmutex.h"
+#include "dserv/data_service.h"
+#include "dserv/shared_memory.h"
+#include "dserv/ipcmutex.h"
+#include "dserv/redis.h"
 
 #define SEMAPHORE_NAME "/my_named_semaphore"
 
@@ -27,9 +28,40 @@
 int example_mutex(int argc, char ** argv);
 int example_sharedMemory (int argc, char ** argv);
 int example_data_services(int argc, char ** argv);
+int example_redis_data_service(int argc, char** argv);
 
 int main(int argc, char ** argv) {
-	return example_data_services(argc, argv);
+	return example_redis_data_service(argc, argv);
+}
+
+
+int example_redis_data_service(int argc, char** argv) {
+	redisDataService* dserv = new redisDataService();
+
+	char str[] = "Fuck eah!";
+	char buff[50];
+	int type = 1;
+
+	dserv->connect();
+	if ( !dserv->add(type, str, sizeof(str) - 1) ) {
+		return 1;
+	}
+
+	if ( !dserv->get(type, time(0), buff) ) {
+		return 1;
+	}
+
+	if ( !memcmp(str, buff, sizeof(str) - 1) ) {
+		printf("Wrote and red data is equals\n");
+	} else {
+		printf("Wrote and red data isn't equals\n");
+	}
+
+	dserv->disconnect();
+
+	printf("All done\n");
+
+	return 0;
 }
 
 int example_data_services(int argc, char ** argv) {

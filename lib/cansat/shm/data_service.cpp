@@ -23,8 +23,6 @@
  * ===============================================
  */
 
-#ifdef _GDBM_H_
-
 DBMDataService::DBMDataService() {
 	initDataBase(this, DEFAULT_D_BASE_NAME);
 }
@@ -56,8 +54,6 @@ int DBMDataService::get(int key, char* data) {
 int DBMDataService::add(int key, char* data, int size) {
 	return dataBase::add((char*)&key, sizeof(key), data, size);
 }
-
-#endif
 
 /**
  * ===============================================
