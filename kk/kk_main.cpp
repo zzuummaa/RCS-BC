@@ -30,7 +30,7 @@ int main() {
 
 	string inVal = "0";
 	string oldInVal = "0";
-	int impulsCount = 0;
+	int subImpulsCount = 0;
 	int dataServiceTimer = 0;
 
 	while (1) {
@@ -41,7 +41,7 @@ int main() {
 
 		gpio4->getval_gpio(inVal);
 		if ( inVal.compare(oldInVal) != 0 ) {
-			impulsCount++;
+			subImpulsCount++;
 			oldInVal = inVal;
 		}
 
@@ -49,12 +49,12 @@ int main() {
 
 		if (dataServiceTimer > 1000) {
 			tel_kk tel;
-			tel.impulsPerSec = impulsCount;
+			tel.impulsPerSec = subImpulsCount / 2; //low and high signals is one impulse
 
 			dserv->add(TYPE_KK, (char*)&tel, sizeof(tel_kk));
 
 			dataServiceTimer = 0;
-			impulsCount = 0;
+			subImpulsCount = 0;
 		}
 	}
 

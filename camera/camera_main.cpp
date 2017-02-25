@@ -12,44 +12,81 @@
 #include <string.h>
 #include <sys/wait.h>
 
-#include "telemetry_pipe.h"
-#include "filewriter.h"
 #include "camera.h"
-#include "shm/data_service.h"
+#include "structs.h"
+#include "filewriter.h"
+#include "shm/redis.h"
+
+#include <boost/filesystem.hpp>
+#include <iostream>
+
+namespace fs = boost::filesystem;
 
 #define IMG_PATH "img"
 
-int telfd;
-int testfd;
-int imgfd;
-int pid;
+const char* FILENAME_FORMAT = "%d.bmp";
 
 /**
  * Write file name to dst
  */
-void formatted_filename(char* dst) {
-	time_t t = time(NULL);
-	tm* aTm = localtime(&t);
+void formatted_filename(char* dst, int num) {
+	strcpy(dst, IMG_PATH);
+	dst += sizeof(IMG_PATH);
 
-	sprintf(dst, "%s/img%d-%d-%d.bmp",
-			IMG_PATH, aTm->tm_hour, aTm->tm_min, aTm->tm_sec);
+	sprintf(dst, FILENAME_FORMAT, num);
+}
+
+int getFilenameNum(const char* formated_filename) {
+	int photoNum;
+
+	if (sscanf(formated_filename, FILENAME_FORMAT, &photoNum) == 1) {
+		return photoNum;
+	} else {
+		return -1;
+	}
+}
+
+/**
+ * return 0 if nothing found
+ * 		  max number of files
+ */
+int getMaxPhotoNum(char* dir) {
+	int maxPhotoNum = 0;
+
+	for (fs::recursive_directory_iterator it(string("./").append(dir)), end; it != end; ++it) {
+		std::string fullFname = it->path().string();
+		std::string fname = fullFname.substr( fullFname.rfind('/')+1 );
+
+		int tmpNum = getFilenameNum(fname.c_str());
+
+		if (tmpNum > maxPhotoNum) {
+			maxPhotoNum = tmpNum;
+		}
+	}
+
+	return maxPhotoNum;
 }
 
 int main() {
-	IPCDataService shtel;
-	shtel.connect();
+	dataService* shtel = new redisDataService();
+	shtel->connect();
 
 	filewriter fwriter;
+
+	int photo_num = getMaxPhotoNum(IMG_PATH) + 1;
+	std::cout << "Next num=" << photo_num << endl;
 
 	camera cam;
 	if ( !cam.open() ) {
 		return 1;
 	}
 
+	tel_camera tcam;
+	char photoName[100];
+
 	printf("Waiting for camera 3 seconds...\n");
 	sleep(3);
 
-	tel_camera tcam;
 	while (true) {
 		printf("\n");
 
@@ -57,17 +94,20 @@ int main() {
 
 		image img = cam.getLastImage();
 
-		formatted_filename(tcam.last_img_name);
-		fwriter.fileOpen(tcam.last_img_name, "w");
+		formatted_filename(photoName, photo_num);
+		fwriter.fileOpen(photoName, "w");
 		fwriter.write(img.getBuff(), img.getSize());
 
 		fwriter.fileClose();
 		img.release();
 
-		shtel.add(TYPE_CAMERA, (char*)&tcam, sizeof(tel_camera));
+		shtel->add(TYPE_CAMERA, (char*)&tcam, sizeof(tel_camera));
 
 		sleep(2);
 	}
+
+	shtel->disconnect();
+	delete shtel;
 
 	return 0;
 }

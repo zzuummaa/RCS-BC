@@ -23,7 +23,7 @@ typedef enum {
 } DATA_TYPE;
 
 typedef struct {
-	char last_img_name[30];
+	int photo_num;
 } tel_camera;
 
 typedef struct {
