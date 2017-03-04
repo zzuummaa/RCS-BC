@@ -76,7 +76,6 @@ static int set_i2c_register(int file,
     return 0;
 }
 
-
 static int get_i2c_register(int file,
                             unsigned char addr,
                             unsigned char reg,
@@ -130,17 +129,6 @@ int I2C::readByte(uint8_t subAddr) {
 }
 
 int I2C::readBytes(uint8_t subAddr, char* dst, int dataCount) {
-	/*unsigned char data_write[2];
-
-	data_write[0] = (subAddr >> 0) & 0xFF;
-
-	if (write(fd, data_write, 2) != 2) {
-		return 0;
-	}
-
-	if (read(fd, dst, dataCount) != dataCount) {
-		return 0;
-	}*/
 
 	for (int i=0; i < dataCount; i++) {
 		int status = get_i2c_register(fd, addr, subAddr+i, (uint8_t*)(dst+i) );

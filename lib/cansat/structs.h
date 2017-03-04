@@ -19,8 +19,14 @@
 typedef enum {
 	TYPE_NOTHING = 0,
 	TYPE_CAMERA  = 2,
-	TYPE_KK = 3
+	TYPE_KK = 3,
+	TYPE_BAROMETER = 4
 } DATA_TYPE;
+
+typedef struct {
+	float pressure;
+	float altitude;
+} tel_barometer;
 
 typedef struct {
 	int photo_num;
@@ -31,6 +37,8 @@ typedef struct {
 } tel_kk;
 
 /**
+ * Deprecated
+ *
  * Pack of all system condition
  */
 typedef struct {

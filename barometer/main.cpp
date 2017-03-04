@@ -5,39 +5,32 @@
  *      Author: Cntgfy
  */
 
+#include "barometer.h"
+#include "structs.h"
+#include "shm/redis.h"
+
 #include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <linux/i2c-dev.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
 
 #include <iostream>
 using namespace std;
 
-#include "barometer.h"
-
 int main() {
-	Barometer barom;
+	dataService* dserv = new redisDataService();
+	dserv->connect();
 
+	Barometer barom;
 	barom.begin();
 
-	int count = 1;
-	double pressure = 0;
-	double temperature = 0;
+	tel_barometer tel_bar;
 
-	for (int i=0; i < count; i++) {
-		pressure += barom.readPressureMillibars();
-		temperature += barom.readTemperatureC();
-		usleep(10 * 1000);
+	for(;;) {
+		tel_bar.pressure = barom.readPressurePascals();
+		tel_bar.altitude = barom.GOST4401_altitude(tel_bar.pressure);
+
+		dserv->add(TYPE_BAROMETER, (char*)&tel_bar, sizeof(tel_bar));
+
+		sleep(1);
 	}
-
-	pressure /= count;
-	temperature /= count;
-
-	cout << "pressure in millibars: " << pressure << endl;
-	cout << "temperature in Celsius: " << temperature << endl;
 
 	return 0;
 }

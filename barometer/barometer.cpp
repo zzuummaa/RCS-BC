@@ -6,6 +6,7 @@
  */
 
 #include "barometer.h"
+#include "GOST4401_81.h"
 
 #include <stddef.h>
 #include <unistd.h>
@@ -131,9 +132,9 @@ int16_t LPS331::readTemperatureRaw(void)
 // atmosphere model from the given pressure in pascals
 // The model implemented for height up to 51km
 //
-/*float LPS331::GOST4401_altitude(float pressure_pascals){
+float LPS331::GOST4401_altitude(float pressure_pascals){
   return GOST4401_getAltitude(pressure_pascals);
-}*/
+}
 
 // converts pressure in mbar to altitude in meters, using 1976 US
 // Standard Atmosphere model (note that this formula only applies to a
