@@ -182,8 +182,8 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/kk"/>
 			<resource resourceType="PROJECT" workspacePath="/lib"/>
-			<resource resourceType="PROJECT" workspacePath="/speedTestDataService"/>
 		</configuration>
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/telemetry"/>

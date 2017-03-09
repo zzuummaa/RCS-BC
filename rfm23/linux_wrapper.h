@@ -22,7 +22,7 @@ void console_print(char* data);
 
 void io_bit_clear(uint8_t reg, int32_t bit);
 
-void io_bit_set(uint8_t reg, int32_t bit, );
+//void io_bit_set(uint8_t reg, int32_t bit, );
 
 void SPI_begin();
 

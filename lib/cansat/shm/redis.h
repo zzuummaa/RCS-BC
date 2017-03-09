@@ -42,9 +42,12 @@ public:
 	 * return 1 if success
 	 * 		  0 if failure
 	 */
-	int get(int type, int time, char* lastData);
+	int getFromSec(int type, int sec, char* lastData);
+
+	int getLast(int type, char* data);
 
 	int add(int type, char* data, int size);
+	int addLast(int type, char* data, int size);
 };
 
 

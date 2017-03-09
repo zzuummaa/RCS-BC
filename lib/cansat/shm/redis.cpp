@@ -13,6 +13,8 @@
 using namespace std::chrono;
 using namespace std;
 
+const string last_prefix = "l";
+
 int redisDataService::create() {
 	cerr << "Operation redisDataService_create() isn't supported" << endl;
 
@@ -43,8 +45,35 @@ int redisDataService::get(int key, char* data) {
 	return 0;
 }
 
-int redisDataService::get(int type, int time, char* lastData) {
-	string formatKey = to_string(type) + ":" + to_string(time) + ":*";
+int redisDataService::addLast(int type, char* data, int size) {
+	string key = to_string(type) + ":" + last_prefix;
+
+	reply r = conn->run(command("SET") << key << string(data, size));
+
+	if (r.type() == reply::type_t::STATUS) {
+		if ( r.str().compare("OK") == 0 ) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+int redisDataService::getLast(int type, char* data) {
+	string key = to_string(type) + ":" + last_prefix;
+
+	reply r1 = conn->run(command("GET") << key);
+
+	if (r1.type() != reply::type_t::STRING) {
+		cerr << "redisDataService_get() invalid get reply type\n" << endl;
+		return 0;
+	}
+
+	return 0;
+}
+
+int redisDataService::getFromSec(int type, int sec, char* lastData) {
+	string formatKey = to_string(type) + ":" + to_string(sec) + ":*";
 
 	reply r = conn->run(command("KEYS") << formatKey);
 
@@ -76,6 +105,10 @@ int redisDataService::get(int type, int time, char* lastData) {
 }
 
 int redisDataService::add(int type, char* data, int size) {
+	if ( addLast(type, data, size) == 0) {
+		return 0;
+	}
+
 	milliseconds curTime = duration_cast< milliseconds >(
 	    system_clock::now().time_since_epoch()
 	);

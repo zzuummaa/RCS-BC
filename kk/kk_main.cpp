@@ -22,8 +22,8 @@ int main() {
 	dataService* dserv = new redisDataService();
 	dserv->connect();
 
-	GPIOClass* gpio4 = new GPIOClass("4"); //create new GPIO object to be attached to  GPIO4
-	GPIOClass* gpio2 = new GPIOClass("2"); //create new GPIO object to be attached to  GPIO17
+	GPIOClass* gpio4 = new GPIOClass("17"); //create new GPIO object to be attached to  GPIO4
+	GPIOClass* gpio2 = new GPIOClass("27"); //create new GPIO object to be attached to  GPIO17
 
 	gpio2->setdir_gpio("out"); //GPIO4 set to output
 	gpio4->setdir_gpio("in");
