@@ -12,6 +12,7 @@
 
 #include "cansat/camera.h"
 #include "cansat/shm/data_service.h"
+#include "cansat/shm/redis.h"
 
 using namespace std;
 
@@ -23,9 +24,9 @@ using namespace std;
  * return 1 - test success
  * 		  0 - test failure
  */
-typedef int (*function)();
+typedef int (*functi)(void);
 
-void printResult(const char* fName, function funct) {
+void printResult(const char* fName, functi funct) {
 	printf("===========================\n");
 	printf("==Start '%s'==\n", fName);
 	printf("===========================\n");
@@ -46,12 +47,14 @@ int pipeTest();
 int cameraTest();
 int multiphotoCameraTest();
 int shTelemetryTest();
+int redisDataServiceTest();
 
 int main() {
 	printResult("Pipe", pipeTest);
 	printResult("Camera", cameraTest);
 	printResult("MultiPhoto", multiphotoCameraTest);
-	printResult("Shared telemetry", shTelemetryTest);
+	//printResult("Shared telemetry", shTelemetryTest);
+	printResult("Redis data service", redisDataServiceTest);
 }
 
 int shTelemetryTest() {
@@ -167,4 +170,38 @@ int cameraTest() {
 
 int pipeTest() {
 	return 1;
+}
+
+int redisDataServiceTest() {
+	cout << "Creating service" << endl;
+
+	redisDataService dserv;
+	dserv.connect();
+
+	char buff[] = {'F', 'e', 'c'};
+
+	cout << "Add '" << string(buff, sizeof(buff)) << "' to service" << endl;
+
+	if ( !dserv.add(0, buff, sizeof(buff)) ) {
+		cout << "Adding failure" << endl;
+		return 0;
+	}
+
+	cout << "Reading '" << string(buff, sizeof(buff)) << "' from service" << endl;
+
+	char outBuff[sizeof(buff)];
+
+	if ( !dserv.getLast(0, outBuff) ) {
+		cout << "Reading failure" << endl;
+		return 0;
+	}
+
+	if ( memcmp(buff, outBuff, sizeof(buff)) == 0) {
+		cout << "Data is equals" << endl;
+		return 1;
+	} else {
+		cout << "Data isn't equals" << endl;
+		cout << "Out buffer: '" << string(outBuff, sizeof(outBuff)) << "'" << endl;
+		return 0;
+	}
 }

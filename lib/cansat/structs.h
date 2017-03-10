@@ -17,11 +17,16 @@
  * Values of expected data type
  */
 typedef enum {
-	TYPE_NOTHING = 0,
-	TYPE_CAMERA  = 2,
-	TYPE_KK = 3,
-	TYPE_BAROMETER = 4
+	TYPE_NOTHING	= 0,
+	TYPE_CAMERA		= 2,
+	TYPE_KK			= 3,
+	TYPE_BAROMETER	= 4,
+	TYPE_TERMO		= 5
 } DATA_TYPE;
+
+typedef struct {
+	float sens_temp[2];
+} tel_termo;
 
 typedef struct {
 	float pressure;

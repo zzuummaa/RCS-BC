@@ -69,7 +69,10 @@ int redisDataService::getLast(int type, char* data) {
 		return 0;
 	}
 
-	return 0;
+	string rData = r1.str();
+	memcpy(data, rData.c_str(), rData.size());
+
+	return 1;
 }
 
 int redisDataService::getFromSec(int type, int sec, char* lastData) {
@@ -118,7 +121,7 @@ int redisDataService::add(int type, char* data, int size) {
 
 	string key = to_string(type) + ":" + to_string(sec) + ":" + to_string(ms);
 
-	reply r = conn->run(command("SET") << key << string(data, size));
+	reply r = conn->run(command("SET") << key << string(data, size) );
 
 	if (r.type() == reply::type_t::STATUS) {
 		if ( r.str().compare("OK") == 0 ) {
