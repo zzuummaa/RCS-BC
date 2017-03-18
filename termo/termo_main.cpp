@@ -75,12 +75,12 @@ int handleTempSens(const char* devPath, int sensNum, tel_termo* term) {
 }
 
 int main (void) {
-	int TERM_SENS_COUNT = 2;
+	int THERM_SENS_COUNT = 2;
 
-	char* TERM_SENS[TERM_SENS_COUNT] = {"28-00000889fcf8",
+	char* THERM_SENS[THERM_SENS_COUNT] = {"28-00000889fcf8",
 					  	  	  	  	  	"28-0000088a5c9c"};
 
-	char devPath[TERM_SENS_COUNT][128]; // Path to device
+	char devPath[THERM_SENS_COUNT][128]; // Path to device
 
 	/*if ( !searchDevice(dev) ) {
 		perror ("Couldn't open the w1 devices directory");
@@ -91,15 +91,15 @@ int main (void) {
 	dserv->connect();
 
 	// Assemble path to OneWire device
-	for (int i = 0; i < TERM_SENS_COUNT; i++) {
-		sprintf(devPath[i], "%s/%s/w1_slave", path, TERM_SENS[i]);
+	for (int i = 0; i < THERM_SENS_COUNT; i++) {
+		sprintf(devPath[i], "%s/%s/w1_slave", path, THERM_SENS[i]);
 	}
 
 	// Read temp continuously
 	// Opening the device's file triggers new reading
 	tel_termo term;
 	while(1) {
-		for (int i = 0; i < TERM_SENS_COUNT; i++) {
+		for (int i = 0; i < THERM_SENS_COUNT; i++) {
 			if( !handleTempSens(devPath[i], i, &term) ) {
 				sleep(1);
 				continue;

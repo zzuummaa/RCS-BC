@@ -21,8 +21,16 @@ typedef enum {
 	TYPE_CAMERA		= 2,
 	TYPE_KK			= 3,
 	TYPE_BAROMETER	= 4,
-	TYPE_TERMO		= 5
+	TYPE_TERMO		= 5,
+	TYPE_GPS_NAV	= 6
 } DATA_TYPE;
+
+typedef struct {
+	float latitude;
+	float longitude;
+	float speed;
+	bool isValid;
+} tel_GPSNavigation;
 
 typedef struct {
 	float sens_temp[2];
