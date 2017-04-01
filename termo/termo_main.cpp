@@ -99,6 +99,9 @@ int main (void) {
 	// Opening the device's file triggers new reading
 	tel_termo term;
 	while(1) {
+		term.sens_temp[0] = 0x00;
+		term.sens_temp[1] = 0x00;
+
 		for (int i = 0; i < THERM_SENS_COUNT; i++) {
 			if( !handleTempSens(devPath[i], i, &term) ) {
 				sleep(1);

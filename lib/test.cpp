@@ -189,9 +189,10 @@ int redisDataServiceTest() {
 
 	cout << "Reading '" << string(buff, sizeof(buff)) << "' from service" << endl;
 
+	char outKey[KEY_SIZE];
 	char outBuff[sizeof(buff)];
 
-	if ( !dserv.getLast(0, outBuff) ) {
+	if ( !dserv.getLast(0, outKey, outBuff) ) {
 		cout << "Reading failure" << endl;
 		return 0;
 	}
@@ -204,4 +205,5 @@ int redisDataServiceTest() {
 		cout << "Out buffer: '" << string(outBuff, sizeof(outBuff)) << "'" << endl;
 		return 0;
 	}
+
 }

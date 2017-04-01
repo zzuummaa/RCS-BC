@@ -39,16 +39,8 @@ int redisDataService::disconnect() {
 	return 1;
 }
 
-int redisDataService::get(int key, char* data) {
-	cerr << "Operation redisDataService_get() isn't supported" << endl;
-
-	return 0;
-}
-
-int redisDataService::addLast(int type, char* data, int size) {
-	string key = to_string(type) + ":" + last_prefix;
-
-	reply r = conn->run(command("SET") << key << string(data, size));
+int redisDataService::add_(string key, string data) {
+	reply r = conn->run(command("SET") << key << data );
 
 	if (r.type() == reply::type_t::STATUS) {
 		if ( r.str().compare("OK") == 0 ) {
@@ -59,9 +51,7 @@ int redisDataService::addLast(int type, char* data, int size) {
 	return 0;
 }
 
-int redisDataService::getLast(int type, char* data) {
-	string key = to_string(type) + ":" + last_prefix;
-
+int redisDataService::get_(string key, string* data) {
 	reply r1 = conn->run(command("GET") << key);
 
 	if (r1.type() != reply::type_t::STRING) {
@@ -69,8 +59,45 @@ int redisDataService::getLast(int type, char* data) {
 		return 0;
 	}
 
-	string rData = r1.str();
-	memcpy(data, rData.c_str(), rData.size());
+	*data = r1.str();
+
+	return 1;
+}
+
+int redisDataService::get(int key, char* data) {
+	cerr << "Operation redisDataService_get() isn't supported" << endl;
+
+	return 0;
+}
+
+int redisDataService::addLast(int type, const char* key, const char* data, int size) {
+	string outKey = to_string(type) + ":" + last_prefix;
+	string outData = string(key, KEY_SIZE) + string(data, size);
+
+	/*reply r = conn->run(command("SET") << outKey << outData);
+
+	if (r.type() == reply::type_t::STATUS) {
+		if ( r.str().compare("OK") == 0 ) {
+			return 1;
+		}
+	}*/
+
+	return add_(outKey, outData);
+}
+
+int redisDataService::getLast(int type, char* key, char* data) {
+	string outKey = to_string(type) + ":" + last_prefix;
+	string rData;
+
+	if ( !get_(outKey, &rData) ) {
+		return 0;
+	}
+
+	const char* pKey  = rData.c_str();
+	const char* pData = rData.c_str() + KEY_SIZE;
+
+	memcpy(key,  pKey,  KEY_SIZE);
+	memcpy(data, pData, rData.size() - KEY_SIZE);
 
 	return 1;
 }
@@ -108,10 +135,6 @@ int redisDataService::getFromSec(int type, int sec, char* lastData) {
 }
 
 int redisDataService::add(int type, char* data, int size) {
-	if ( addLast(type, data, size) == 0) {
-		return 0;
-	}
-
 	milliseconds curTime = duration_cast< milliseconds >(
 	    system_clock::now().time_since_epoch()
 	);
@@ -121,13 +144,9 @@ int redisDataService::add(int type, char* data, int size) {
 
 	string key = to_string(type) + ":" + to_string(sec) + ":" + to_string(ms);
 
-	reply r = conn->run(command("SET") << key << string(data, size) );
-
-	if (r.type() == reply::type_t::STATUS) {
-		if ( r.str().compare("OK") == 0 ) {
-			return 1;
-		}
+	if ( addLast(type, key.c_str(), data, size) == 0) {
+		return 0;
 	}
 
-	return 0;
+	return add_(key, string(data, size));
 }
