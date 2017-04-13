@@ -13,6 +13,7 @@
 #include "cansat/camera.h"
 #include "cansat/shm/data_service.h"
 #include "cansat/shm/redis.h"
+#include "cansat/validator.h"
 
 using namespace std;
 
@@ -48,6 +49,7 @@ int cameraTest();
 int multiphotoCameraTest();
 int shTelemetryTest();
 int redisDataServiceTest();
+int validatorTest();
 
 int main() {
 	printResult("Pipe", pipeTest);
@@ -55,6 +57,29 @@ int main() {
 	printResult("MultiPhoto", multiphotoCameraTest);
 	//printResult("Shared telemetry", shTelemetryTest);
 	printResult("Redis data service", redisDataServiceTest);
+	printResult("Validator", validatorTest);
+}
+
+int validatorTest() {
+	printf("Initialize validator\n");
+	validator valid;
+	valid.addTelInfo(0);
+	valid.getTelInfo(0)->setValidFieldDiapason(0, 0, 10);
+
+	printf("Validate values\n");
+	if (!valid.getTelInfo(0)->checkFieldDiapason(0, 1)) {
+		printf("Incorrect behaviour with a value within the range\n");
+		return 0;
+	}
+
+	if (valid.getTelInfo(0)->checkFieldDiapason(0, 11)) {
+		printf("Incorrect behaviour with a value outside the range\n");
+		return 0;
+	}
+
+	printf("Destroying validator\n");
+
+	return 1;
 }
 
 int shTelemetryTest() {
