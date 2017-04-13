@@ -15,13 +15,20 @@ using namespace std;
 
 class telemetryConditions {
 private:
+	int maxWaitTimeMS;
+	int lastTimeMS;
 	map<int, double> begin;
 	map<int, double> end;
 public:
 	telemetryConditions();
 	~telemetryConditions();
-	void setValidFieldDiapason(int field_num, double begin, double end);
+
+	void setFieldDiapason(int field_num, double begin, double end);
 	bool checkFieldDiapason(int field_num, double val);
+
+	void setMaxWaitTime(int ms);
+	bool checkWaitTime();
+	bool checkWaitTime(int* waitTimeMS);
 };
 
 class validator {
@@ -30,8 +37,13 @@ private:
 public:
 	validator();
 	~validator();
-	void addTelInfo(int tel_type);
-	telemetryConditions* getTelInfo(int tel_type);
+	void addType(int tel_type);
+	telemetryConditions* getWithType(int tel_type);
 };
+
+/**
+ * return current time in milliseconds
+ */
+int getCurTime();
 
 #endif /* CANSAT_VALIDATOR_H_ */

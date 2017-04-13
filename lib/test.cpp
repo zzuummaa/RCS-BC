@@ -63,17 +63,32 @@ int main() {
 int validatorTest() {
 	printf("Initialize validator\n");
 	validator valid;
-	valid.addTelInfo(0);
-	valid.getTelInfo(0)->setValidFieldDiapason(0, 0, 10);
+	valid.addType(0);
+	valid.getWithType(0)->setFieldDiapason(0, 0, 10);
 
 	printf("Validate values\n");
-	if (!valid.getTelInfo(0)->checkFieldDiapason(0, 1)) {
+	if (!valid.getWithType(0)->checkFieldDiapason(0, 1)) {
 		printf("Incorrect behaviour with a value within the range\n");
 		return 0;
 	}
 
-	if (valid.getTelInfo(0)->checkFieldDiapason(0, 11)) {
+	if (valid.getWithType(0)->checkFieldDiapason(0, 11)) {
 		printf("Incorrect behaviour with a value outside the range\n");
+		return 0;
+	}
+
+	printf("Validate time\n");
+	valid.getWithType(0)->setMaxWaitTime(5);
+	valid.getWithType(0)->checkWaitTime();
+	usleep(2000);
+	if (!valid.getWithType(0)->checkWaitTime()) {
+		printf("Incorrect behaviour with time < max valid timeout\n");
+		return 0;
+	}
+
+	usleep(7000);
+	if (valid.getWithType(0)->checkWaitTime()) {
+		printf("Incorrect behaviour with time > max valid timeout\n");
 		return 0;
 	}
 

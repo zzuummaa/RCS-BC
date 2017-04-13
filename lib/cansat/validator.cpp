@@ -6,6 +6,22 @@
  */
 
 #include "validator.h"
+#include "limits.h"
+
+#include <chrono>
+
+using namespace std::chrono;
+
+/**
+ * return current time in milliseconds
+ */
+int getCurTime() {
+	milliseconds curTime = duration_cast< milliseconds >(
+		system_clock::now().time_since_epoch()
+	);
+
+	return curTime.count();
+}
 
 validator::validator() {
 }
@@ -17,7 +33,7 @@ validator::~validator() {
 	}
 }
 
-void validator::addTelInfo(int tel_type) {
+void validator::addType(int tel_type) {
 	if (telCons.find(tel_type) != telCons.end()) {
 		cerr << "Error: telemetry with type " << tel_type << " already exist" << endl;
 		exit(0);
@@ -26,7 +42,7 @@ void validator::addTelInfo(int tel_type) {
 	telCons[tel_type] = new telemetryConditions();
 }
 
-telemetryConditions* validator::getTelInfo(int tel_type) {
+telemetryConditions* validator::getWithType(int tel_type) {
 	std::map<int, telemetryConditions*>::iterator iter = telCons.find(tel_type);
 	if (iter == telCons.end()) {
 		cerr << "Error: element with type " << tel_type << " not found" << endl;
@@ -37,12 +53,14 @@ telemetryConditions* validator::getTelInfo(int tel_type) {
 }
 
 telemetryConditions::telemetryConditions() {
+	maxWaitTimeMS = INT_MAX;
+	lastTimeMS = getCurTime();
 }
 
 telemetryConditions::~telemetryConditions() {
 }
 
-void telemetryConditions::setValidFieldDiapason(int field_num, double begin, double end) {
+void telemetryConditions::setFieldDiapason(int field_num, double begin, double end) {
 	this->begin[field_num] = begin;
 	this->end[field_num]   = end;
 }
@@ -58,4 +76,24 @@ bool telemetryConditions::checkFieldDiapason(int field_num, double val) {
 	} else {
 		return false;
 	}
+}
+
+void telemetryConditions::setMaxWaitTime(int ms) {
+	maxWaitTimeMS = ms;
+}
+
+bool telemetryConditions::checkWaitTime() {
+	int waitTimeMS;
+	return checkWaitTime(&waitTimeMS);
+}
+
+bool telemetryConditions::checkWaitTime(int* waitTimeMS) {
+	int curTimeMS = getCurTime();
+	*waitTimeMS = curTimeMS - lastTimeMS;
+
+	bool flag = *waitTimeMS < maxWaitTimeMS;
+
+	lastTimeMS = curTimeMS;
+
+	return flag;
 }
