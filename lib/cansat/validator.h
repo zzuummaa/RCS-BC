@@ -17,14 +17,14 @@ class telemetryConditions {
 private:
 	int maxWaitTimeMS;
 	int lastTimeMS;
-	map<int, double> begin;
-	map<int, double> end;
+	map<string, double> begin;
+	map<string, double> end;
 public:
 	telemetryConditions();
 	~telemetryConditions();
 
-	void setFieldDiapason(int field_num, double begin, double end);
-	bool checkFieldDiapason(int field_num, double val);
+	void setFieldDiapason(string field, double begin, double end);
+	bool checkFieldDiapason(string field, double val);
 
 	void setMaxWaitTime(int ms);
 	bool checkWaitTime();

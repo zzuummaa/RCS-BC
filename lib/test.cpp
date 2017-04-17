@@ -64,15 +64,15 @@ int validatorTest() {
 	printf("Initialize validator\n");
 	validator valid;
 	valid.addType(0);
-	valid.getWithType(0)->setFieldDiapason(0, 0, 10);
+	valid.getWithType(0)->setFieldDiapason("test", 0, 10);
 
 	printf("Validate values\n");
-	if (!valid.getWithType(0)->checkFieldDiapason(0, 1)) {
+	if (!valid.getWithType(0)->checkFieldDiapason("test", 1)) {
 		printf("Incorrect behaviour with a value within the range\n");
 		return 0;
 	}
 
-	if (valid.getWithType(0)->checkFieldDiapason(0, 11)) {
+	if (valid.getWithType(0)->checkFieldDiapason("test", 11)) {
 		printf("Incorrect behaviour with a value outside the range\n");
 		return 0;
 	}

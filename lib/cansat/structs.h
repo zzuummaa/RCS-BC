@@ -29,6 +29,7 @@ typedef struct {
 	float latitude;
 	float longitude;
 	float speed;
+	float altitude;
 	bool isValid;
 } tel_GPSNavigation;
 

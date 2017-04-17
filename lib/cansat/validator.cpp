@@ -60,18 +60,18 @@ telemetryConditions::telemetryConditions() {
 telemetryConditions::~telemetryConditions() {
 }
 
-void telemetryConditions::setFieldDiapason(int field_num, double begin, double end) {
-	this->begin[field_num] = begin;
-	this->end[field_num]   = end;
+void telemetryConditions::setFieldDiapason(string field, double begin, double end) {
+	this->begin[field] = begin;
+	this->end[field]   = end;
 }
 
-bool telemetryConditions::checkFieldDiapason(int field_num, double val) {
-	if (begin.find(field_num) == begin.end()) {
-		cerr << "Error: field_num=" << field_num << ", and not found" << endl;
+bool telemetryConditions::checkFieldDiapason(string field, double val) {
+	if (begin.find(field) == begin.end()) {
+		cerr << "Error: field '" << field << "', and not found" << endl;
 		exit(0);
 	}
 
-	if (begin[field_num] < val && val < end[field_num]) {
+	if (begin[field] < val && val < end[field]) {
 		return true;
 	} else {
 		return false;
