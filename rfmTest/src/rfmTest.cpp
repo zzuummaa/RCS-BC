@@ -17,9 +17,38 @@ static uint8_t reg;
 int main_rfm_setup(int argc, char* argv[]);
 int main_spi(int argc, char* argv[]);
 int main_rfm_receive(int argc, char* argv[]);
+int main_rfm_send(int argc, char* argv[]);
 
 int main(int argc, char* argv[]) {
-	return main_rfm_receive(argc, argv);
+	return main_rfm_send(argc, argv);
+}
+
+int main_rfm_send(int argc, char* argv[]) {
+	// Initialise the radio
+	RFM22B *myRadio = new RFM22B("/dev/spidev0.0");
+
+	// Set the bus speed
+	//myRadio->setMaxSpeedHz(200000);
+
+	// Radio configuration
+	myRadio->reset();
+	myRadio->setCarrierFrequency(869.5E6);
+	myRadio->setModulationType(RFM22B::GFSK);
+	myRadio->setModulationDataSource(RFM22B::FIFO);
+	myRadio->setDataClockConfiguration(RFM22B::NONE);
+	myRadio->setTransmissionPower(5);
+	myRadio->setGPIOFunction(RFM22B::GPIO0, RFM22B::TX_STATE);
+	myRadio->setGPIOFunction(RFM22B::GPIO1, RFM22B::RX_STATE);
+
+	// What header are we broadcasting
+	myRadio->setTransmitHeader(123456789);
+
+	char output[RFM22B::MAX_PACKET_LENGTH] = "Hello World!";
+	printf("Sending '%s'\n", output);
+	myRadio->send((uint8_t*)output, RFM22B::MAX_PACKET_LENGTH);
+	myRadio->close();
+
+	return 0;
 }
 
 int main_rfm_receive(int argc, char* argv[]) {
