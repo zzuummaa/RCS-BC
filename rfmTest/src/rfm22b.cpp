@@ -20,6 +20,86 @@
  
 #include "rfm22b.h"
 
+void set_interrupts_enable(RFM22B* myRadio) {
+	myRadio->setRegister(RFM22B::INTERRUPT_ENABLE_1, (1<<1) | (1<<2) );
+	myRadio->setRegister(RFM22B::INTERRUPT_ENABLE_2, 0x00);
+}
+
+void rx_interrupts_check(RFM22B* myRadio) {
+	uint8_t int_status_1 = myRadio->getRegister(RFM22B::INTERRUPT_STATUS_1);
+	uint8_t int_status_2 = myRadio->getRegister(RFM22B::INTERRUPT_STATUS_2);
+	uint8_t dev_status   = myRadio->getRegister(RFM22B::DEVICE_STATUS);
+
+	for (int i = 7; i >= 0; i--) {
+		printf("DEVICE_STATUS (reg=0x%02x, bit=%d): %d\n", RFM22B::DEVICE_STATUS, i, dev_status>>i & 1);
+	}
+
+	printf("===============================\n");
+
+	for (int i = 7; i >= 0; i--) {
+		printf("INTERRUPT_STATUS_1 (reg=0x%02x, bit=%d): %d\n", RFM22B::INTERRUPT_STATUS_1, i, int_status_1>>i & 1);
+	}
+
+	printf("===============================\n");
+
+	for (int i = 7; i >= 0; i--) {
+		printf("INTERRUPT_STATUS_2 (reg=0x%02x, bit=%d): %d\n", RFM22B::INTERRUPT_STATUS_2,  i, int_status_2>>i & 1);
+	}
+}
+
+RFM22B::RFM22B(const char* dev) : SPI(dev) {
+
+	//Radio settings
+	this->setRegister(0x1C, 0x2E);
+	this->setRegister(0x1D, 0x40);
+	this->setRegister(0x20, 0x68);
+	this->setRegister(0x21, 0x01);
+	this->setRegister(0x22, 0x3A);
+	this->setRegister(0x23, 0x93);
+	this->setRegister(0x24, 0x01);
+	this->setRegister(0x25, 0x30);
+	this->setRegister(0x2A, 0x1E);
+	this->setRegister(0x2C, 0x28);
+	this->setRegister(0x2D, 0x82);
+	this->setRegister(0x2E, 0x29);
+
+	this->setRegister(0x30, 0xA8);
+	this->setRegister(0x32, 0x80);
+	this->setRegister(0x33, 0x0A);
+	this->setRegister(0x34, 0x08);
+	this->setRegister(0x35, 0x22);
+	this->setRegister(0x36, 0x2D);
+	this->setRegister(0x37, 0xD4);
+	this->setRegister(0x38, 0x00);
+	this->setRegister(0x39, 0x00);
+	this->setRegister(0x3A, 0x00);
+	this->setRegister(0x3B, 0x00);
+	this->setRegister(0x3C, 0x00);
+	this->setRegister(0x3D, 0x00);
+	this->setRegister(0x3E, 0x40);
+	this->setRegister(0x3F, 0x00);
+	this->setRegister(0x40, 0x00);
+	this->setRegister(0x41, 0x00);
+	this->setRegister(0x42, 0x00);
+	this->setRegister(0x43, 0xFF);
+	this->setRegister(0x44, 0xFF);
+	this->setRegister(0x45, 0xFF);
+	this->setRegister(0x46, 0xFF);
+
+	this->setRegister(0x6E, 0x4E);
+	this->setRegister(0x6F, 0xA5);
+
+	this->setRegister(0x70, 0x2C);
+	this->setRegister(0x71, 0x22);
+	this->setRegister(0x72, 0x20);
+
+	this->setRegister(0x75, 0x53);
+	this->setRegister(0x76, 0x4B);
+	this->setRegister(0x77, 0x00);
+
+	set_interrupts_enable(this);
+}
+
 // Set the frequency of the carrier wave
 //	This function calculates the values of the registers 0x75-0x77 to achieve the 
 //	desired carrier wave frequency (without any hopping set)
@@ -359,7 +439,8 @@ void RFM22B::enableTXMode() {
 
 // Reset the device
 void RFM22B::reset() {
-	this->setOperatingMode(READY_MODE | RESET);
+	//this->setOperatingMode(READY_MODE | RESET);
+	this->setRegister(OPERATING_MODE_AND_FUNCTION_CONTROL_1, 1 << 7);
 }
 
 // Set or get the trasmit header
@@ -493,10 +574,13 @@ void RFM22B::clearTXFIFO() {
 }
 
 // Send data
-void RFM22B::send(uint8_t *data, int length) {
+bool RFM22B::send(uint8_t *data, int length) {
 	// Clear TX FIFO
 	this->clearTXFIFO();
 	
+	printf("\nAfter clearTXFIFO()\n");
+	rx_interrupts_check(this);
+
 	// Initialise rx and tx arrays
 	uint8_t tx[MAX_PACKET_LENGTH+1] = { 0 };
 	uint8_t rx[MAX_PACKET_LENGTH+1] = { 0 };
@@ -519,14 +603,48 @@ void RFM22B::send(uint8_t *data, int length) {
 	
 	// Make the transfer
 	this->transfer(tx,rx,length+1);
-	
+
+	usleep(3000);
+
+	printf("\nAfter setTransmitPacketLength()\n");
+	printf("Tx packet length: %d\n", this->getRegister(TRANSMIT_PACKET_LENGTH));
+
 	// Enter TX mode
 	this->enableTXMode();
 
+	printf("\nAfter enableTXMode()\n");
+	rx_interrupts_check(this);
+
+	// Timing for the interrupt loop timeout
+	struct timeval start, end;
+	gettimeofday(&start, NULL);
+	long elapsed = 0;
+
+	int timeout = 2000;
+
+	int regControl;
+
 	// Loop until packet has been sent (device has left TX mode)
-	while (((this->getRegister(OPERATING_MODE_AND_FUNCTION_CONTROL_1)>>3) & 1)) {}
+	while (elapsed < timeout) {
+		regControl = this->getRegister(INTERRUPT_STATUS_1);
+		if ( (regControl>>2) & 1 ) break;
+
+		// Determine elapsed time
+		gettimeofday(&end, NULL);
+		elapsed = (end.tv_usec - start.tv_usec)/1000 + (end.tv_sec - start.tv_sec)*1000;
+	}
 	
-	return;
+	printf("Send package with INTERRUPT_STATUS_1: %d\n", regControl);
+
+	printf("\nAfter send end\n");
+	rx_interrupts_check(this);
+
+	if (elapsed >= timeout) {
+		return false;
+	} else {
+		return true;
+	}
+
 };
 
 // Receive data (blocking with timeout). Returns number of bytes received
@@ -534,8 +652,15 @@ int RFM22B::receive(uint8_t *data, int length, int timeout) {
 	// Make sure RX FIFO is empty, ready for new data
 	this->clearRXFIFO();
 	
+	printf("\nAfter clearRXFIFO()\n");
+	rx_interrupts_check(this);
+	printf("Rx pack length: %d\n", this->getRegister(RECEIVED_PACKET_LENGTH));
+
 	// Enter RX mode
 	this->enableRXMode();
+
+	printf("\nAfter enableRXMode()\n");
+	rx_interrupts_check(this);
 		
 	// Initialise rx and tx arrays
 	uint8_t tx[MAX_PACKET_LENGTH+1] = { 0 };
@@ -549,21 +674,34 @@ int RFM22B::receive(uint8_t *data, int length, int timeout) {
     gettimeofday(&start, NULL);
 	long elapsed = 0;
 	
+	int regControl;
+
 	// Loop endlessly on interrupt or timeout
 	//	Don't use interrupt registers here as these don't seem to behave consistently
 	//	Watch the operating mode register for the device leaving RX mode. This is indicitive
 	//	of a valid packet being received
-	while (((this->getRegister(OPERATING_MODE_AND_FUNCTION_CONTROL_1)>>2) & 1) && elapsed < timeout) {
+	while (elapsed < timeout) {
+		regControl = this->getRegister(INTERRUPT_STATUS_1);
+		if (regControl>>1 & 1) break;
+
 		// Determine elapsed time
 		gettimeofday(&end, NULL);
 		elapsed = (end.tv_usec - start.tv_usec)/1000 + (end.tv_sec - start.tv_sec)*1000;
-	}	
+	}
 	
+	printf("Rx pack length: %d\n", this->getRegister(RECEIVED_PACKET_LENGTH));
+	printf("Read package with INTERRUPT_STATUS_1: %d\n", regControl);
+
+	printf("\nAfter end receiving\n");
+	rx_interrupts_check(this);
+
 	// If timeout occured, return -1
 	if (elapsed >= timeout) {
 		return -1;
 	}
 	
+	usleep(3000);
+
 	// Get length of packet received
 	uint8_t rxLength = this->getReceivedPacketLength();
 

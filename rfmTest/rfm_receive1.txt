@@ -1,0 +1,89 @@
+Listening to a message...
+
+After clearRXFIFO()
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 0
+DEVICE_STATUS (reg=0x02, bit=4): 0
+DEVICE_STATUS (reg=0x02, bit=3): 0
+DEVICE_STATUS (reg=0x02, bit=2): 0
+DEVICE_STATUS (reg=0x02, bit=1): 0
+DEVICE_STATUS (reg=0x02, bit=0): 0
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 0
+Rx pack length: 255
+
+After enableRXMode()
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 1
+DEVICE_STATUS (reg=0x02, bit=4): 1
+DEVICE_STATUS (reg=0x02, bit=3): 1
+DEVICE_STATUS (reg=0x02, bit=2): 1
+DEVICE_STATUS (reg=0x02, bit=1): 1
+DEVICE_STATUS (reg=0x02, bit=0): 1
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 0
+Rx pack length: 255
+Read package with INTERRUPT_STATUS_1: 0
+
+After end receiving
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 0
+DEVICE_STATUS (reg=0x02, bit=4): 0
+DEVICE_STATUS (reg=0x02, bit=3): 0
+DEVICE_STATUS (reg=0x02, bit=2): 0
+DEVICE_STATUS (reg=0x02, bit=1): 0
+DEVICE_STATUS (reg=0x02, bit=0): 0
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 0
+Received string: 'OZ'

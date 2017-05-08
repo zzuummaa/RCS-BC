@@ -13,6 +13,7 @@ static char* dev = "/dev/spidev0.0";
 static uint8_t reg;
 
 #include "rfm22b.h"
+#include "rfm22b_enums.h"
 
 int main_rfm_setup(int argc, char* argv[]);
 int main_spi(int argc, char* argv[]);
@@ -20,7 +21,7 @@ int main_rfm_receive(int argc, char* argv[]);
 int main_rfm_send(int argc, char* argv[]);
 
 int main(int argc, char* argv[]) {
-	return main_rfm_send(argc, argv);
+	return main_rfm_setup(argc, argv);
 }
 
 int main_rfm_send(int argc, char* argv[]) {
@@ -32,16 +33,16 @@ int main_rfm_send(int argc, char* argv[]) {
 
 	// Radio configuration
 	myRadio->reset();
-	myRadio->setCarrierFrequency(869.5E6);
+	/*myRadio->setCarrierFrequency(869.5E6);
 	myRadio->setModulationType(RFM22B::GFSK);
 	myRadio->setModulationDataSource(RFM22B::FIFO);
 	myRadio->setDataClockConfiguration(RFM22B::NONE);
-	myRadio->setTransmissionPower(5);
-	myRadio->setGPIOFunction(RFM22B::GPIO0, RFM22B::TX_STATE);
+	myRadio->setTransmissionPower(5);*/
 	myRadio->setGPIOFunction(RFM22B::GPIO1, RFM22B::RX_STATE);
+	myRadio->setGPIOFunction(RFM22B::GPIO0, RFM22B::TX_STATE);
 
 	// What header are we broadcasting
-	myRadio->setTransmitHeader(123456789);
+	/*myRadio->setTransmitHeader(123456789);*/
 
 	char output[RFM22B::MAX_PACKET_LENGTH] = "Hello World!";
 	printf("Sending '%s'\n", output);
@@ -59,24 +60,24 @@ int main_rfm_receive(int argc, char* argv[]) {
 		//myRadio->setMaxSpeedHz(200000);
 
 		// Radio configuration
-		myRadio->reset();
+		/*myRadio->reset();
 		myRadio->setCarrierFrequency(869.5E6);
 		myRadio->setModulationType(RFM22B::GFSK);
 		myRadio->setModulationDataSource(RFM22B::FIFO);
 		myRadio->setDataClockConfiguration(RFM22B::NONE);
-		myRadio->setTransmissionPower(5);
-		myRadio->setGPIOFunction(RFM22B::GPIO0, RFM22B::TX_STATE);
+		myRadio->setTransmissionPower(5);*/
 		myRadio->setGPIOFunction(RFM22B::GPIO1, RFM22B::RX_STATE);
+		myRadio->setGPIOFunction(RFM22B::GPIO0, RFM22B::TX_STATE);
 
 		// What header do we want?
-		myRadio->setCheckHeader(123456789);
+		//myRadio->setCheckHeader(123456789);
 
 		// Listen for a packet
 		printf("Listening to a message...\n");
 
 		char input[RFM22B::MAX_PACKET_LENGTH];
 		myRadio->receive((uint8_t*)input, RFM22B::MAX_PACKET_LENGTH);
-		printf("%s\n", input);
+		printf("Received string: '%s'\n", input);
 
 		myRadio->close();
 

@@ -146,6 +146,10 @@ enum RFM22B_Modulation_Data_Source {
 	PN9											= 0x03	
 };
 
+enum RFM22B_Interrupt_Enable {
+	ENABLE_VALID_PACK_RECEIVE				   = (1 << 1)
+};
+
 enum RFM22B_CRC_Mode {
 		CRC_DISABLED,
 		CRC_DATA_ONLY,

@@ -38,7 +38,7 @@ public:
 	#include "rfm22b_enums.h"
 
 	// Constructor requires SPI device path, passes this is SPI class
-	RFM22B(const char *device) : SPI(device) {}
+	RFM22B(const char *device);
 	
 	// Set or get the carrier frequency (in Hz);
 	void setCarrierFrequency(unsigned int frequency);
@@ -145,7 +145,7 @@ public:
 	void clearTXFIFO();
 	
 	// Send data
-	void send(uint8_t *data, int length);
+	bool send(uint8_t *data, int length);
 	
 	// Receive data (blocking with timeout). Returns number of bytes received
 	int receive(uint8_t *data, int length, int timeout=30000);
@@ -162,6 +162,8 @@ public:
 private:
 	
 	void setFIFOThreshold(RFM22B_Register reg, uint8_t thresh);
-
 };
+
+void set_rx_interrupts_enable(RFM22B* myRadio);
+void rx_interrupts_check(RFM22B* myRadio);
 #endif

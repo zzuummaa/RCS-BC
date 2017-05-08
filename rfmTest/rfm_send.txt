@@ -1,0 +1,86 @@
+Sending 'Hello World!'
+
+After clearTXFIFO()
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 0
+DEVICE_STATUS (reg=0x02, bit=4): 0
+DEVICE_STATUS (reg=0x02, bit=3): 0
+DEVICE_STATUS (reg=0x02, bit=2): 0
+DEVICE_STATUS (reg=0x02, bit=1): 0
+DEVICE_STATUS (reg=0x02, bit=0): 0
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 0
+
+After enableTXMode()
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 0
+DEVICE_STATUS (reg=0x02, bit=4): 0
+DEVICE_STATUS (reg=0x02, bit=3): 0
+DEVICE_STATUS (reg=0x02, bit=2): 0
+DEVICE_STATUS (reg=0x02, bit=1): 0
+DEVICE_STATUS (reg=0x02, bit=0): 0
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 0
+Send package with INTERRUPT_STATUS_1: 32
+
+After send end
+DEVICE_STATUS (reg=0x02, bit=7): 0
+DEVICE_STATUS (reg=0x02, bit=6): 0
+DEVICE_STATUS (reg=0x02, bit=5): 0
+DEVICE_STATUS (reg=0x02, bit=4): 0
+DEVICE_STATUS (reg=0x02, bit=3): 0
+DEVICE_STATUS (reg=0x02, bit=2): 0
+DEVICE_STATUS (reg=0x02, bit=1): 0
+DEVICE_STATUS (reg=0x02, bit=0): 0
+===============================
+INTERRUPT_STATUS_1 (reg=0x03, bit=7): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=6): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=5): 1
+INTERRUPT_STATUS_1 (reg=0x03, bit=4): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=3): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=2): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=1): 0
+INTERRUPT_STATUS_1 (reg=0x03, bit=0): 0
+===============================
+INTERRUPT_STATUS_2 (reg=0x04, bit=7): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=6): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=5): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=4): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=3): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=2): 0
+INTERRUPT_STATUS_2 (reg=0x04, bit=1): 1
+INTERRUPT_STATUS_2 (reg=0x04, bit=0): 1

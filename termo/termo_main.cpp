@@ -78,16 +78,16 @@ int main (void) {
 	int THERM_SENS_COUNT = 2;
 
 	char* THERM_SENS[THERM_SENS_COUNT] = {"28-00000889fcf8",
-					  	  	  	  	  	"28-0000088a5c9c"};
+										  "28-0000088a5c9c"};
 
 	char devPath[THERM_SENS_COUNT][128]; // Path to device
 
-	/*if ( !searchDevice(dev) ) {
+	/*if ( !searchDevice(THERM_SENS[0]) ) {
 		perror ("Couldn't open the w1 devices directory");
 		return 1;
 	}*/
 
-	dataService* dserv = new redisDataService();
+	redisDataService* dserv = new redisDataService();
 	dserv->connect();
 
 	// Assemble path to OneWire device
